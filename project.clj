@@ -15,7 +15,6 @@
                  [hiccup "1.0.5"]]
 
   :plugins [[lein-ring "0.8.13"]
-            [com.cemerick/austin "0.2.0-SNAPSHOT"]
             [lein-cljsbuild "1.0.3"]]
 
   :hooks [leiningen.cljsbuild]
@@ -32,14 +31,5 @@
 
   :profiles
     {:dev {:dependencies [[ring-mock "0.1.5"]
-                          [javax.servlet/servlet-api "2.5"]]
-
-           :injections [(require '[books.brepl :refer [connect-to-browser]]
-                                 '[cemerick.austin.repls])
-                        (defn browser-repl-env []
-                          (reset! cemerick.austin.repls/browser-repl-env
-                                   (cemerick.austin/repl-env)))
-                        (defn browser-repl []
-                          (cemerick.austin.repls/cljs-repl
-                            (browser-repl-env)))]}
+                          [javax.servlet/servlet-api "2.5"]]}
      })
