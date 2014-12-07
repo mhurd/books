@@ -1,9 +1,12 @@
-(ns books.handler
+(ns books.routes.home
   (:require [books.views.layout :refer [say]]
-            [books.routes.home :refer [home-routes]]
             [compojure.core :refer :all]
             [compojure.handler :as handler]
             [compojure.route :as route]))
 
-(def app
-  (handler/site home-routes))
+(defroutes home-routes
+
+  (GET "/" [] (say "I am ready to be initialised!"))
+
+  (route/resources "/")
+  (route/not-found "not found"))

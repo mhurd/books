@@ -1,4 +1,4 @@
-(ns books.layout
+(ns books.views.layout
   (:require
     [hiccup
       [page :refer [html5 include-js include-css]]]))
