@@ -18,7 +18,7 @@
 (def iso-8601-timestamp-formatter (SimpleDateFormat. "yyyy-MM-dd'T'HH:mm:ss'Z'"))
 
 (def secret-key-spec
-  "Memoized version of the secret key spec"
+  "Memoized version of the SecretKeySpec"
   (memoize (fn [secret]
              "Creates a secret key spec by sha-256-ing the supplied secret"
              (SecretKeySpec. (. secret getBytes utf8-charset) sha-256))))
@@ -26,7 +26,7 @@
 (def mac
   "Memoized verison of the MAC"
   (memoize (fn [secret-key-spec]
-             "Creates a message authentication code using the supplied secret key spec"
+             "Creates a message authentication code initialised with the supplied SecretKeySpec"
              (let [mac-instance (. Mac getInstance sha-256)]
                (. mac-instance init secret-key-spec)
                mac-instance
@@ -58,8 +58,13 @@
   )
 
 (defn hmac [secret-key-spec to-encode]
-  "Creates a hash-based message authentication code from the supplied
-  secret key spec and the string to encode"
+  "Creates a hashed message authentication code from the supplied
+  SecretKeySpec (holds the secret) and the string to encode. Its base-64 encoded 
+  to save space (both hex encoding and base64 will turn a hash into a valid ASCII string. 
+  However, a hex string (where bytes are each represented as two ASCII characters between 0 and F) 
+  will take twice as much space as the original, while the base64 version will only 
+  take four thirds as much space. A hex-encoded SHA-256 is 64 bytes, while a 
+  base64-encoded SHA-256 is more or less 43 bytes)"
   (let [bytes (. to-encode getBytes utf8-charset)
         rawHmac (. (mac secret-key-spec) doFinal bytes)
         encoded (. base-64-encoder encode rawHmac)]
