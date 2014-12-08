@@ -8,7 +8,7 @@
     (is (not (identical? (secret-key-spec "foo") (secret-key-spec "bar")))) ;; a different secret shouldn't
     ))
 
-(def test-basic-args
+(def expected-basic-args
   (sorted-map
     "Service" service-name,
     "Version" api-version,
@@ -22,7 +22,7 @@
 (deftest test-basic-args
   (testing "basic-args memoization"
     (is (identical? (basic-args "foo" "bar") (basic-args "foo" "bar")))
-    (is (not (identical? (basic-args "foo" "bar") (basic-args "bar" "foo"))))
+    (is (= (basic-args "one" "two") expected-basic-args))
     ))
 
 (deftest test-percent-encode-rfc-3986
