@@ -13,7 +13,8 @@
                  [org.clojure/core.async "0.1.346.0-17112a-alpha"]
                  [om "0.8.0-alpha1"]
                  [hiccup "1.0.5"]
-                 [http-kit "2.1.18"]]
+                 [http-kit "2.1.18"]
+                 [org.clojure/tools.logging "0.3.1"]]
 
   :plugins [[lein-ring "0.8.13"]
             [lein-cljsbuild "1.0.3"]]

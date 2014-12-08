@@ -4,7 +4,8 @@
            (javax.crypto.spec SecretKeySpec)
            (javax.crypto Mac)
            (java.net URLEncoder))
-  (:require [org.httpkit.client :as http-kit]))
+  (:require [org.httpkit.client :as http-kit]
+            [clojure.tools.logging :as log]))
 
 ;; Amazon API Constants
 (def api-version "2011-08-01")
@@ -21,6 +22,7 @@
   "Memoized version of the SecretKeySpec"
   (memoize (fn [secret]
              "Creates a secret key spec by sha-256-ing the supplied secret"
+             (log/info (str "Creating a SecretKeySpec from secret: " secret))
              (SecretKeySpec. (. secret getBytes utf8-charset) sha-256))))
 
 (def mac
