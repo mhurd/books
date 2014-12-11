@@ -1,9 +1,7 @@
 (ns books.handler
-  (:require [books.views.layout :refer [say]]
-            [books.routes.home :refer [home-routes]]
+  (:require [books.routes.main :refer [main-routes]]
             [compojure.core :refer :all]
-            [compojure.handler :as handler]
-            [compojure.route :as route]))
+            [compojure.handler :as handler]))
 
 (def app
-  (handler/site home-routes))
+  (handler/site main-routes))

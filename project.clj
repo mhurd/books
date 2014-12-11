@@ -22,11 +22,17 @@
   :hooks [leiningen.cljsbuild]
 
   :cljsbuild {
-    :builds [{:source-paths ["src/books/cljs"]
-              :compiler {:output-to "resources/public/js/books.js"
+    :builds [{:source-paths ["src/books/cljs/main"]
+              :compiler {:output-to "resources/public/js/main.js"
                          :optimizations :whitespace
                          :pretty-print true
-                         ;; :source-map "resources/public/js/books.js.map"
+                         ;; :source-map "resources/public/js/main.js.map"
+                         }}
+             {:source-paths ["src/books/cljs/login"]
+              :compiler {:output-to     "resources/public/js/login.js"
+                         :optimizations :whitespace
+                         :pretty-print  true
+                         ;; :source-map "resources/public/js/login.js.map"
                          }}]}
 
   :ring {:handler books.handler/app}
