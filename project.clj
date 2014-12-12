@@ -14,6 +14,7 @@
                  [om "0.8.0-alpha1"]
                  [hiccup "1.0.5"]
                  [http-kit "2.1.18"]
+                 [cljs-ajax "0.3.3"]
                  [org.clojure/tools.logging "0.3.1"]]
 
   :plugins [[lein-ring "0.8.13"]
@@ -35,7 +36,7 @@
                          ;; :source-map "resources/public/js/login.js.map"
                          }}]}
 
-  :ring {:handler books.handler/app}
+  :main books.handler
 
   :profiles
     {:dev {:dependencies [[ring-mock "0.1.5"]

@@ -1,3 +1,15 @@
+.stripe-light {
+    list-style-type: none;
+    padding: 2px;
+    background-color: whitesmoke;
+}
+
+.stripe-dark {
+    list-style-type: none;
+    padding: 2px;
+    background-color: beige;
+}
+
 .username-input {
     padding: 2px;
     margin-right: 5px;
