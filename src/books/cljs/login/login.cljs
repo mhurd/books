@@ -18,7 +18,7 @@
 (defn login [state]
   (let [email (:email state)
         password (:password state)]
-    (GET (str "http://localhost:3000/echo/" email "/" password) {:response-format :json, :handler add-message})))
+    (GET (str "http://localhost:3000/echo/" email "/" password) {:response-format :json, :handler add-message, :error-handler add-message})))
 
 (defn stripe [text className]
   (dom/li #js {:className className} text))
