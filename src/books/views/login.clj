@@ -6,7 +6,8 @@
 (defn with-css []
   (list
    ;; more css e.g. (include-css "/css/bootstrap.css")
-   (include-css "/css/login.css")))
+   (include-css "/css/login.css")
+   (include-css "http://yui.yahooapis.com/pure/0.5.0/pure-min.css")))
 
 (defn with-js []
   (list

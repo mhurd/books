@@ -6,9 +6,7 @@
 
 (enable-console-print!)
 
-(def app-state (atom {:user     "Please enter your username",
-                      :password "",
-                      :messages []}))
+(def app-state (atom {:messages []}))
 
 (defn add-message [r]
   (let [json (str r)
@@ -18,9 +16,9 @@
   )
 
 (defn login [state]
-  (let [username (:username state)
+  (let [email (:email state)
         password (:password state)]
-    (GET (str "http://localhost:3000/echo/" username "/" password) {:response-format :json, :handler add-message})))
+    (GET (str "http://localhost:3000/echo/" email "/" password) {:response-format :json, :handler add-message})))
 
 (defn stripe [text className]
   (dom/li #js {:className className} text))
@@ -32,21 +30,20 @@
   (reify
     om/IInitState
     (init-state [_]
-      {:username ""
+      {:email ""
        :password ""})
     om/IRenderState
     (render-state [this state]
-      (dom/div nil
-               (dom/h2 nil "Login")
-               (dom/div nil
-                        (dom/input #js {:className "username-input" :type "text" :ref "email"
-                                        :value (:username state) :onChange #(handle-change % owner :username)})
-                        (dom/input #js {:className "password-input" :type "password" :ref "password"
-                                        :value (:password state) :onChange #(handle-change % owner :password)})
-                        (dom/button #js {:onClick #(login state)} "Login"))
-               (dom/div nil
-                        (apply dom/ul #js {:className "messages"}
-                               (map stripe (:messages app) (cycle ["stripe-light" "stripe-dark"]))))))))
+      (dom/h2 nil "Login")
+      (dom/div #js {:className "pure-form"}
+                (dom/fieldset nil
+                              (dom/legend nil "Login")
+                               (dom/input #js {:type "text" :ref "email" :placeholder "Email" :value (:email state) :onChange #(handle-change % owner :email)})
+                               (dom/input #js {:type "password" :ref "password":placeholder "Password" :value (:password state) :onChange #(handle-change % owner :password)})
+                               (dom/button #js {:className "pure-button pure-button-primary" :onClick #(login state)} "Login"))
+                (dom/div nil
+                         (apply dom/ul #js {:className "messages"}
+                                (map stripe (:messages app) (cycle ["stripe-light" "stripe-dark"]))))))))
 
 (om/root login-view app-state
          {:target (. js/document (getElementById "login-page"))})
