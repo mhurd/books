@@ -9,3 +9,13 @@
     padding: 2px;
     background-color: beige;
 }
+
+.content {
+    padding-top: 2em;
+    padding-left: 2em;
+    padding-right: 2em;
+}
+
+input {
+    margin-right: 4px !important; /* override the purecss.io style*/
+}

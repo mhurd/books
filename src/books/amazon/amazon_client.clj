@@ -93,7 +93,7 @@
         to-sign (str "GET\n" api-host "\n" api-url "\n" merged)
         hmac-result (hmac secret-key-spec to-sign)
         sig (percent-encode-rfc-3986 hmac-result)]
-      (str api-url "?" merged "&Signature=" sig)
+    (str api-url "?" merged "&Signature=" sig)
     )
   )
 

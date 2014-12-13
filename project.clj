@@ -15,6 +15,7 @@
                  [hiccup "1.0.5"]
                  [http-kit "2.1.18"]
                  [cljs-ajax "0.3.3"]
+                 [com.cemerick/url "0.1.1"]
                  [org.clojure/tools.logging "0.3.1"]]
 
   :plugins [[lein-ring "0.8.13"]

@@ -14,4 +14,4 @@
       (dom/h1 nil (:text data)))))
 
 (om/root widget app-state
-  {:target (. js/document (getElementById "root-page"))})
+         {:target (. js/document (getElementById "root-page"))})
