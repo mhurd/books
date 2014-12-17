@@ -15,13 +15,10 @@
 
 ;; run the server with 'lein run'
 
-(defn decode [s]
-  (url-decode (clojure.string/replace s "%" "%25")))
-
 (defroutes main-routes
            (GET "/" [] (say "I am ready to be initialised!"))
            (GET "/login" [] (login-page))
-           (GET "/echo/:email/:password" [email password] (str "\"" (decode email) "'s secret password is " (decode password) " (although I probably shouldn't tell you that)\""))
+           (GET "/echo/:email/:password" [email password] (str "\"" (url-decode email) "'s secret password is " (url-decode password) " (although I probably shouldn't tell you that)\""))
            (route/resources "/")
            (route/not-found "<p>Page not found.</p>"))
 
