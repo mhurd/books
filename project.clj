@@ -16,7 +16,8 @@
                  [http-kit "2.1.18"]
                  [cljs-ajax "0.3.3"]
                  [com.cemerick/url "0.1.1"]
-                 [org.clojure/tools.logging "0.3.1"]]
+                 [org.clojure/tools.logging "0.3.1"]
+                 [jayq "2.5.2"]]
 
   :plugins [[lein-ring "0.8.13"]
             [lein-cljsbuild "1.0.3"]]
@@ -28,7 +29,7 @@
               :compiler {:output-to "resources/public/js/main.js"
                          :optimizations :whitespace
                          :pretty-print true
-                         ;; :source-map "resources/public/js/main.js.map"
+                         :externs ["lib/jquery-2.1.3.min.js"]
                          }}
              {:source-paths ["src/books/cljs/login"]
               :compiler {:output-to     "resources/public/js/login.js"

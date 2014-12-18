@@ -11,8 +11,8 @@
 
 (defn with-js []
   (list
-    ;; more js e.g. (include-js "//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js")
-    (include-js "http://fb.me/react-0.9.0.js")
+    (include-js "/lib/jquery-2.1.3.min.js")
+    (include-js "//fb.me/react-0.9.0.js")
     (include-js "/js/login.js")))
 
 (defn login-page []
