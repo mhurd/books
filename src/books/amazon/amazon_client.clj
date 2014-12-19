@@ -88,24 +88,24 @@
   all together, URL encoded and add a Timestamp arg (current date in ISO 8601 format)"
   (merge-and-encode-args access-key associate-tag (merge args (sorted-map "Timestamp" (current-iso-8601-timestamp)))))
 
-(defn create-signed-url [access-key associate-tag secret-key-spec args]
+(defn create-signed-url [access-key associate-tag secret args]
   (let [merged (merge-and-encode-args-with-timestamp access-key associate-tag args)
         to-sign (str "GET\n" api-host "\n" api-url "\n" merged)
-        hmac-result (hmac secret-key-spec to-sign)
+        hmac-result (hmac (secret-key-spec secret) to-sign)
         sig (percent-encode-rfc-3986 hmac-result)]
     (str api-url "?" merged "&Signature=" sig)
     )
   )
 
-(defn find-on-amazon [access-key associate-tag secret-key-spec args]
-  (let [response (http-kit/get (str "https://" api-host (create-signed-url access-key associate-tag secret-key-spec args)))]
-    (:body @response))
+(defn find-on-amazon [access-key associate-tag secret args]
+  (let [response (http-kit/get (str "https://" api-host (create-signed-url access-key associate-tag secret args)))]
+    (clojure.string/replace (:body @response) "<?xml version=\"1.0\" ?>" "")
+    ))
+
+(defn find-by-isbn [access-key associate-tag secret isbn]
+  (find-on-amazon access-key associate-tag secret (sorted-map "Operation" "ItemLookup" "ItemId" isbn "IdType" "ISBN"))
   )
 
-(defn find-by-isbn [access-key associate-tag secret-key-spec isbn]
-  (find-on-amazon access-key associate-tag secret-key-spec (sorted-map "Operation" "ItemLookup" "ItemId" isbn "IdType" "ISBN"))
-  )
-
-(defn find-offer-summary-by-isbn [access-key associate-tag secret-key-spec isbn]
-  (find-on-amazon access-key associate-tag secret-key-spec (sorted-map "ResponseGroup" "OfferSummary" "Operation" "ItemLookup" "ItemId" isbn "IdType" "ISBN"))
+(defn find-offer-summary-by-isbn [access-key associate-tag secret isbn]
+  (find-on-amazon access-key associate-tag secret (sorted-map "ResponseGroup" "OfferSummary" "Operation" "ItemLookup" "ItemId" isbn "IdType" "ISBN"))
   )
