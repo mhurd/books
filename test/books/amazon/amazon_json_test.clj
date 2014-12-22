@@ -445,7 +445,3 @@
       </Item>
    </Items>
 </ItemLookupResponse>")
-
-(deftest test-convert
-  (testing "convert XML to JSON"
-    (println (to-json doc))))

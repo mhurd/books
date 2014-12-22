@@ -5,8 +5,10 @@
         [clojure.data.zip.xml :refer (text xml1->)]))
 
 (defn String->Number [str]
-  (let [n (read-string str)]
-    (if (number? n) n nil)))
+  (if (nil? str)
+    nil
+    (let [n (read-string str)]
+      (if (number? n) n nil))))
 
 (defn get-item-element [root]
   (xml1-> root :Items :Item))
@@ -91,6 +93,14 @@
   (xml1-> item-element :ItemAttributes :PublicationDate text)
   )
 
+(defn safe-min [x y]
+  (if (nil? x)
+    y
+    (if (nil? y)
+      x
+      (min x y)))
+  )
+
 (defn to-map [amazon-xml]
   (let [doc (parse-str amazon-xml)
         root (xml-zip doc)
@@ -105,7 +115,7 @@
      :format (get-format item),
      :isbn (get-isbn item),
      :listPrice (get-list-price item),
-     :lowestPrice (min (get-lowest-new-price item) (get-lowest-used-price item)), ;; compatibility
+     :lowestPrice (safe-min (get-lowest-new-price item) (get-lowest-used-price item)), ;; compatibility
      :lowestNewPrice (get-lowest-new-price item),
      :lowestUsedPrice (get-lowest-used-price item),
      :numberOfPages (get-number-of-pages item),
