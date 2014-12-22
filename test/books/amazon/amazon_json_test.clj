@@ -3,12 +3,12 @@
             [books.amazon.amazon-client :refer :all]
             [amazon.amazon-json :refer :all]))
 
+(def doc (find-by-isbn
+           "AKIAIUZ3CEXC5EF5RJUQ"
+           "fleetiphotobl-20"
+           "kvQ8Z4ov0WBYHT3yk30ZZSZE9cF144pl+yDMVjNI"
+           "1576874672"))
+
 (deftest test-convert
   (testing "convert XML to JSON"
-    (is (= (to-json
-             (find-by-isbn
-               "AKIAIUZ3CEXC5EF5RJUQ"
-               "fleetiphotobl-20"
-               "kvQ8Z4ov0WBYHT3yk30ZZSZE9cF144pl+yDMVjNI"
-               "3775727388"))  ""
-           ))))
+    (println (to-json doc))))

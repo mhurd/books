@@ -19,7 +19,8 @@
                  [org.clojure/tools.logging "0.3.1"]
                  [jayq "2.5.2"]
                  [org.clojure/data.zip "0.1.1"]
-                 [org.clojure/data.xml "0.0.8"]]
+                 [org.clojure/data.xml "0.0.8"]
+                 [org.clojure/data.json "0.2.5"]]
 
   :plugins [[lein-ring "0.8.13"]
             [lein-cljsbuild "1.0.3"]]
