@@ -2,6 +2,8 @@
   (:use [org.httpkit.server :only [run-server]])
   (:require [books.views.main :refer [say]]
             [books.views.login :refer [login-page]]
+            [books.amazon.amazon-client :refer [find-by-isbn]]
+            [books.amazon.amazon-json :refer [to-json]]
             [ring.middleware.reload :as reload]
             [compojure.handler :refer [site]]
             [compojure.route :as route]
@@ -15,8 +17,13 @@
 
 ;; run the server with 'lein run'
 
+(def access-key (atom nil))
+(def associate-tag (atom nil))
+(def secret (atom nil))
+
 (defroutes main-routes
            (GET "/" [] (say "I am ready to be initialised!"))
+           (GET "/books/:id" [id] (to-json (find-by-isbn @access-key @associate-tag @secret id)))
            (GET "/login" [] (login-page))
            (GET "/echo/:email/:password" [email password] (str "\"" (url-decode email) "'s secret password is " (url-decode password) " (although I probably shouldn't tell you that)\""))
            (route/resources "/")
@@ -26,6 +33,10 @@
 
 (defn -main [& args]                                        ;; entry point, lein run will pick up and start from here
   (let [handler (if (in-dev? args)
-                  (reload/wrap-reload (site #'main-routes)) ;; only reload when dev
+                  (reload/wrap-reload (site #'main-routes)) ;; only reload when in dev mode
                   (site main-routes))]
+    (println args)
+    (reset! access-key (first args))
+    (reset! associate-tag (second args))
+    (reset! secret (second (rest args)))
     (run-server handler {:port 3000})))

@@ -99,7 +99,7 @@
 
 (defn find-on-amazon [access-key associate-tag secret args]
   (let [response (http-kit/get (str "https://" api-host (create-signed-url access-key associate-tag secret args)))]
-    (clojure.string/replace (:body @response) "<?xml version=\"1.0\" ?>" "")
+    (:body @response)
     ))
 
 (defn find-by-isbn [access-key associate-tag secret isbn]

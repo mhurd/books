@@ -1,8 +1,9 @@
-(ns amazon.amazon-json
+(ns books.amazon.amazon-json
   (:require [clojure.zip :refer (xml-zip)]
-        [clojure.data.json :refer (json-str)]
+        [clojure.data.json :refer (write-str)]
         [clojure.data.xml :refer (parse-str)]
-        [clojure.data.zip.xml :refer (text xml1->)]))
+        [clojure.data.zip.xml :refer (text xml1->)]
+        [cemerick.url :refer [url-decode]]))
 
 (defn String->Number [str]
   (if (nil? str)
@@ -18,7 +19,7 @@
   )
 
 (defn get-detail-page-url [item-element]
-  (xml1-> item-element :DetailPageURL text)
+  (url-decode (xml1-> item-element :DetailPageURL text))
   )
 
 (defn get-author [item-element]
@@ -74,15 +75,15 @@
   )
 
 (defn get-small-image [item-element]
-  (xml1-> item-element :SmallImage :URL text)
+  (url-decode (xml1-> item-element :SmallImage :URL text))
   )
 
 (defn get-medium-image [item-element]
-  (xml1-> item-element :MediumImage :URL text)
+  (url-decode (xml1-> item-element :MediumImage :URL text))
   )
 
 (defn get-large-image [item-element]
-  (xml1-> item-element :LargeImage :URL text)
+  (url-decode (xml1-> item-element :LargeImage :URL text))
   )
 
 (defn get-publisher [item-element]
@@ -94,11 +95,12 @@
   )
 
 (defn safe-min [x y]
-  (if (nil? x)
-    y
-    (if (nil? y)
-      x
-      (min x y)))
+  (if-not (or x y) ;; both nil
+    nil
+    (let [sx (or x Integer/MAX_VALUE)
+          sy (or y Integer/MAX_VALUE)]
+      (min sx sy))
+    )
   )
 
 (defn to-map [amazon-xml]
@@ -135,5 +137,5 @@
 
 (defn to-json [amazon-xml]
   (let [jmap (to-map amazon-xml)]
-    (json-str jmap)
+    (write-str jmap)
     ))
