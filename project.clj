@@ -28,7 +28,13 @@
   :hooks [leiningen.cljsbuild]
 
   :cljsbuild {
-    :builds [{:source-paths ["src/books/cljs/main"]
+    :builds [{:source-paths ["src/books/cljs/index"]
+              :compiler {:output-to     "resources/public/js/index.js"
+                         :optimizations :whitespace
+                         :pretty-print  true
+                         :externs       ["lib/jquery-2.1.3.min.js"]
+                         }}
+             {:source-paths ["src/books/cljs/main"]
               :compiler {:output-to "resources/public/js/main.js"
                          :optimizations :whitespace
                          :pretty-print true

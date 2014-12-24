@@ -1,25 +1,25 @@
-(ns books.views.login
+(ns books.views.index
   (:require
     [hiccup
      [page :refer [html5 include-js include-css]]]))
 
 (defn with-css []
   (list
-    (include-css "/css/login.css")
+    (include-css "/css/index.css")
     (include-css "http://yui.yahooapis.com/pure/0.5.0/pure-min.css")))
 
 (defn with-js []
   (list
     (include-js "/lib/jquery-2.1.3.min.js")
     (include-js "//fb.me/react-0.9.0.js")
-    (include-js "/js/login.js")))
+    (include-js "/js/index.js")))
 
-(defn login-page []
+(defn index-page []
   (html5
     [:head
-     [:title "login"]
+     [:title "index"]
      [:meta {"name" "viewport" "content" "width=device-width, initial-scale=1.0"}]
      (with-css)]
     [:body
-     [:div {:id "login-page"}]
+     [:div {:id "index-page"}]
      (with-js)]))

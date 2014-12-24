@@ -1,0 +1,29 @@
+.stripe-light {
+    list-style-type: none;
+    padding: 2px;
+    background-color: whitesmoke;
+}
+
+.stripe-dark {
+    list-style-type: none;
+    padding: 2px;
+    background-color: beige;
+}
+
+.content {
+    padding-top: 2em;
+    padding-left: 2em;
+    padding-right: 2em;
+}
+
+.messages {
+    color: darkred;
+}
+
+.json {
+    color: darkslategrey;
+}
+
+input {
+    margin-right: 4px !important; /* override the purecss.io style*/
+}

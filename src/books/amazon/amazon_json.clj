@@ -14,8 +14,8 @@
 (defn get-item-element [root]
   (xml1-> root :Items :Item))
 
-(defn get-first-error-msg [root]
-  (xml1-> root :Items :Request :Errors :Error :Message text)
+(defn get-error [root]
+  (or (xml1-> root :Error :Message text) (xml1-> root :Items :Request :Errors :Error :Message text))
   )
 
 (defn get-asin [item-element]
@@ -111,7 +111,7 @@
   (let [doc (parse-str amazon-xml)
         root (xml-zip doc)
         item (get-item-element root)]
-    (let [error (get-first-error-msg root)]
+    (let [error (get-error root)]                           ;; see if this is an error response
       (if error
         {:error error}                                      ;; return the error
         (sorted-map
@@ -143,6 +143,9 @@
   )
 
 (defn to-json [amazon-xml]
-  (let [jmap (to-map amazon-xml)]
-    (write-str jmap)
-    ))
+  (if (coll? amazon-xml)
+    (write-str (map #(to-map %) amazon-xml))
+    (let [jmap (to-map amazon-xml)]
+      (write-str jmap)
+      ))
+    )
