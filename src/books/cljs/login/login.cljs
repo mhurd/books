@@ -19,13 +19,13 @@
         (fade-out 5000)))
   )
 
-(defn empty? [s]
+(defn nil-or-empty? [s]
   (or (nil? s) (= "" s)))
 
 (defn login [state]
   (let [email (:email state)
         password (:password state)]
-    (if (or (empty? email) (empty? password))
+    (if (or (nil-or-empty? email) (nil-or-empty? password))
       (set-message "Email or Password cannot be empty!")
       (GET (str
              "http://localhost:3000/echo/"

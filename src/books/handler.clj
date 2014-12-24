@@ -30,12 +30,8 @@
            (route/resources "/")
            (route/not-found "<p>Page not found.</p>"))
 
-(defn in-dev? [args] false)                                  ;; TODO read a config variable from command line, env, or file?
-
 (defn -main [& args]                                        ;; entry point, lein run will pick up and start from here
-  (let [handler (if (in-dev? args)
-                  (stacktrace/wrap-stacktrace (reload/wrap-reload (site #'main-routes))) ;; only reload when in dev mode
-                  (stacktrace/wrap-stacktrace (site main-routes)))]
+  (let [handler (stacktrace/wrap-stacktrace (site main-routes))]
     (println args)
     (reset! access-key (first args))
     (reset! associate-tag (second args))
