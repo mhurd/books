@@ -18,14 +18,14 @@
 (def base-64-encoder (. Base64 getEncoder))
 (def iso-8601-timestamp-formatter (SimpleDateFormat. "yyyy-MM-dd'T'HH:mm:ss'Z'"))
 
-(def secret-key-spec
+(def get-secret-key-spec
   "Memoized version of the SecretKeySpec"
   (memoize (fn [secret]
              "Creates a secret key spec by sha-256-ing the supplied secret"
              (log/info (str "Creating a SecretKeySpec from secret: " secret))
              (SecretKeySpec. (. secret getBytes utf8-charset) sha-256))))
 
-(def mac
+(def get-mac
   "Memoized verison of the MAC"
   (memoize (fn [secret-key-spec]
              "Creates a message authentication code initialised with the supplied SecretKeySpec"
@@ -34,7 +34,7 @@
                mac-instance
                ))))
 
-(def basic-args
+(def get-basic-args
   (memoize (fn [accessKey associateTag]
              (sorted-map
                "Service" service-name,
@@ -56,7 +56,8 @@
 (defn percent-encode-rfc-3986 [s]
   "Encodes the URL additionally encoding '+' to spaces,
   See http://stackoverflow.com/questions/2678551/when-to-encode-space-to-plus-or-20"
-  (clojure.string/replace (. URLEncoder encode s utf8-charset) "+" "%20")
+  (if-let [to-encode s]
+    (clojure.string/replace (. URLEncoder encode to-encode utf8-charset) "+" "%20"))
   )
 
 (defn hmac [secret-key-spec to-encode]
@@ -68,7 +69,7 @@
   take four thirds as much space. A hex-encoded SHA-256 is 64 bytes, while a 
   base64-encoded SHA-256 is more or less 43 bytes)"
   (let [bytes (. to-encode getBytes utf8-charset)
-        rawHmac (. (mac secret-key-spec) doFinal bytes)
+        rawHmac (. (get-mac secret-key-spec) doFinal bytes)
         encoded (. base-64-encoder encode rawHmac)]
     (String. encoded)
     )
@@ -78,7 +79,7 @@
   "Take the access key and associate tag and the map of sorted args and merge them
   all together, URL encoded"
   [access-key associate-tag args]
-  (let [merged (merge (basic-args access-key associate-tag) args)
+  (let [merged (merge (get-basic-args access-key associate-tag) args)
         encoded-args (map (fn [[k, v]] (str (percent-encode-rfc-3986 k) "=" (percent-encode-rfc-3986 v))) merged)]
     (apply str (interpose "&" encoded-args)))
   )
@@ -91,7 +92,7 @@
 (defn create-signed-url [access-key associate-tag secret args]
   (let [merged (merge-and-encode-args-with-timestamp access-key associate-tag args)
         to-sign (str "GET\n" api-host "\n" api-url "\n" merged)
-        hmac-result (hmac (secret-key-spec secret) to-sign)
+        hmac-result (hmac (get-secret-key-spec secret) to-sign)
         sig (percent-encode-rfc-3986 hmac-result)]
     (str api-url "?" merged "&Signature=" sig)
     )
