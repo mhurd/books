@@ -1,7 +1,7 @@
 (ns main
   (:require [clojure.browser.repl]
             [om.core :as om :include-macros true]
-            [om.dom :as dom :include-macros true]))
+            [sablono.core :as html :refer-macros [html]]))
 
 (enable-console-print!)
 
@@ -11,7 +11,7 @@
   (reify
     om/IRender
     (render [this]
-      (dom/h1 nil (:text data)))))
+      (html/html (:text data)))))
 
 (om/root widget app-state
          {:target (. js/document (getElementById "root-page"))})

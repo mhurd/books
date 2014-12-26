@@ -1,7 +1,7 @@
 (ns index
   (:require [clojure.browser.repl]
             [om.core :as om :include-macros true]
-            [om.dom :as dom :include-macros true]
+            [sablono.core :as html :refer-macros [html]]
             [ajax.core :refer [GET POST]]
             [cemerick.url :refer [url-encode]]
             [jayq.core :refer [$ fade-in fade-out]]))
@@ -41,9 +41,12 @@
       {})
     om/IRenderState
     (render-state [this state]
-      (dom/div #js {:className "content"}
-               (dom/div #js {:id "message" :className "messages"} (dom/label nil (:message app)))
-               (dom/div #js {:id "json" :className "json"} (dom/label nil (:books-json app)))))))
+      (html/html [:div {:class "content"}
+             [:div {:id "message" :class "messages"}
+              [:label (:message app)]]
+             [:div {:id "json" :class "json"}
+              [:label (:books-json app)]]
+             ]))))
 
 (om/root index-view app-state
          {:target (. js/document (getElementById "index-page"))})

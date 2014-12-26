@@ -12,7 +12,6 @@
                  [org.clojure/clojure "1.6.0"]
                  [org.clojure/core.async "0.1.346.0-17112a-alpha"]
                  [om "0.8.0-alpha1"]
-                 [hiccup "1.0.5"]
                  [http-kit "2.1.18"]
                  [cljs-ajax "0.3.3"]
                  [com.cemerick/url "0.1.1"]
@@ -20,7 +19,11 @@
                  [jayq "2.5.2"]
                  [org.clojure/data.zip "0.1.1"]
                  [org.clojure/data.xml "0.0.8"]
-                 [org.clojure/data.json "0.2.5"]]
+                 [org.clojure/data.json "0.2.5"]
+                 [secretary "1.2.1"]                        ;; see http://spootnik.org/entries/2014/10/26_from-angularjs-to-om-a-walk-through.html
+                 [sablono "0.2.22"]
+                 [cljs-ajax "0.3.3"]
+                 [prismatic/om-tools "0.3.6"]]
 
   :plugins [[lein-ring "0.8.13"]
             [lein-cljsbuild "1.0.3"]]

@@ -1,7 +1,7 @@
 (ns login
   (:require [clojure.browser.repl]
             [om.core :as om :include-macros true]
-            [om.dom :as dom :include-macros true]
+            [sablono.core :as html :refer-macros [html]]
             [ajax.core :refer [GET POST]]
             [cemerick.url :refer [url-encode]]
             [jayq.core :refer [$ fade-in fade-out]]))
@@ -36,10 +36,10 @@
             :handler         set-message,
             :error-handler   set-message}))))
 
-(defn stripe [text className]
+(defn stripe [text class-name]
   ;; usage: (map stripe (:messages app) (cycle ["stripe-light" "stripe-dark"]))
-  (dom/div nil
-           (dom/label #js {:className className} text)))
+  (html/html [:dom
+              [:label {:class class-name} text]]))
 
 (defn handle-change [e owner key state]
   (let [value (.. e -target -value)]
@@ -56,19 +56,22 @@
   (reify
     om/IInitState
     (init-state [_]
-      {:email    ""
+      {:email "",
        :password ""})
     om/IRenderState
     (render-state [this state]
-      (dom/div #js {:className "content"}
-               (dom/div #js {:className "pure-form"}
-                        (dom/fieldset nil
-                                      (dom/legend nil "Login")
-                                      (dom/input #js {:type "text" :ref "email" :placeholder "Email" :value (:email state) :onChange #(handle-change % owner :email state)})
-                                      (dom/input #js {:type "password" :ref "password" :placeholder "Password" :value (:password state) :onChange #(handle-change % owner :password state)})
-                                      (dom/button #js {:className "pure-button pure-button-primary" :onClick #(login state)} "Login"))
-                        (dom/div #js {:id "message" :className "messages"}
-                               (dom/label nil (:message app))))))))
+      (html/html
+        [:div {:class "content"}
+         [:div {:class "pure-form"}
+          [:fieldset
+           [:legend "login"]
+           [:input {:type "text" :ref "email" :placeholder "Email" :value (:email state) :on-change #(handle-change % owner :email state)}]
+           [:input {:type "password" :ref "password" :placeholder "Password" :value (:password state) :on-change #(handle-change % owner :password state)}]
+           [:button {:class "pure-button pure-button-primary" :on-click #(login state)} "Login"]
+           ]
+          [:div {:id "message" :class "messages"}
+           [:label (:message app)]]]]
+        ))))
 
 (om/root login-view app-state
          {:target (. js/document (getElementById "login-page"))})
