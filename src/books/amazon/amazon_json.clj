@@ -3,7 +3,9 @@
         [clojure.data.json :refer (write-str)]
         [clojure.data.xml :refer (parse-str)]
         [clojure.data.zip.xml :refer (text xml1->)]
-        [cemerick.url :refer [url-decode]]))
+        [cemerick.url :refer [url-decode]]
+        [cognitect.transit :refer [writer write]])
+  (import [java.io ByteArrayInputStream ByteArrayOutputStream]))
 
 (defn String->Number [str]
   (if (nil? str)
@@ -113,39 +115,46 @@
         item (get-item-element root)]
     (let [error (get-error root)]                           ;; see if this is an error response
       (if error
-        {:error error}                                      ;; return the error
+        {"error" error}                                      ;; return the error
         (sorted-map
-         :asin (get-asin item),
-         :authors (get-author item),
-         :binding (get-binding item),
-         :amazonPageUrl (get-detail-page-url item),
-         :ean (get-ean item),
-         :edition (get-edition item),
-         :format (get-format item),
-         :isbn (get-isbn item),
-         :listPrice (get-list-price item),
-         :lowestPrice (safe-min (get-lowest-new-price item) (get-lowest-used-price item)), ;; compatibility
-         :lowestNewPrice (get-lowest-new-price item),
-         :lowestUsedPrice (get-lowest-used-price item),
-         :numberOfPages (get-number-of-pages item),
-         :title (get-title item),
-         :totalAvailable (+ (get-total-new item) (get-total-used item))
-         :totalNew (get-total-new item),
-         :totalUsed (get-total-used item),
-         :smallImage (get-small-image item),
-         :mediumImage (get-medium-image item),
-         :largeImage (get-large-image item),
-         :smallBookCover (get-medium-image item),
-         :largeBookCover (get-large-image item),
-         :lastPriceUpdateTimestamp (System/currentTimeMillis),
-         :publisher (get-publisher item),
-         :publicationDate (get-publication-date item)))))
+          "asin" (get-asin item),
+          "authors" (get-author item),
+          "binding" (get-binding item),
+          "amazonPageUrl" (get-detail-page-url item),
+          "ean" (get-ean item),
+          "edition" (get-edition item),
+          "format" (get-format item),
+          "isbn" (get-isbn item),
+          "listPrice" (get-list-price item),
+          "lowestPrice" (safe-min (get-lowest-new-price item) (get-lowest-used-price item)), ;; compatibility
+          "lowestNewPrice" (get-lowest-new-price item),
+          "lowestUsedPrice" (get-lowest-used-price item),
+          "numberOfPages" (get-number-of-pages item),
+          "title" (get-title item),
+          "totalAvailable" (+ (get-total-new item) (get-total-used item))
+          "totalNew" (get-total-new item),
+          "totalUsed" (get-total-used item),
+          "smallImage" (get-small-image item),
+          "mediumImage" (get-medium-image item),
+          "largeImage" (get-large-image item),
+          "smallBookCover" (get-medium-image item),
+          "largeBookCover" (get-large-image item),
+          "lastPriceUpdateTimestamp" (System/currentTimeMillis),
+          "publisher" (get-publisher item),
+          "publicationDate" (get-publication-date item)))))
   )
 
 (defn to-json [amazon-xml]
-  (if (coll? amazon-xml)
-    (write-str (map #(to-map %) amazon-xml))
-    (let [jmap (to-map amazon-xml)]
-      (write-str jmap)
-      ))
-    )
+  (let [out (ByteArrayOutputStream. 4096)
+        w (writer out :json-verbose)]
+    (try
+      (if (coll? amazon-xml)
+          (do
+            (write w (map #(to-map %) amazon-xml))
+            (.toString out "UTF-8"))
+           (let [jmap (to-map amazon-xml)]
+             (write w jmap)
+             (.toString out "UTF-8"))
+             )
+      (finally (.close out)))
+    ))

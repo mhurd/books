@@ -23,7 +23,9 @@
                  [secretary "1.2.1"]                        ;; see http://spootnik.org/entries/2014/10/26_from-angularjs-to-om-a-walk-through.html
                  [sablono "0.2.22"]
                  [cljs-ajax "0.3.3"]
-                 [prismatic/om-tools "0.3.6"]]
+                 [prismatic/om-tools "0.3.6"]
+                 [com.cognitect/transit-clj "0.8.259"]
+                 [com.cognitect/transit-cljs "0.8.194"]]
 
   :plugins [[lein-ring "0.8.13"]
             [lein-cljsbuild "1.0.3"]]
