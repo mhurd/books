@@ -37,18 +37,19 @@
               :compiler {:output-to     "resources/public/js/index.js"
                          :optimizations :whitespace
                          :pretty-print  true
-                         :externs       ["lib/jquery-2.1.3.min.js"]
+                         :externs       ["lib/jquery-2.1.3.min.js", "lib/bootstrap.min.js"]
                          }}
              {:source-paths ["src/books/cljs/main"]
               :compiler {:output-to "resources/public/js/main.js"
                          :optimizations :whitespace
                          :pretty-print true
-                         :externs ["lib/jquery-2.1.3.min.js"]
+                         :externs ["lib/jquery-2.1.3.min.js", "lib/bootstrap.min.js"]
                          }}
              {:source-paths ["src/books/cljs/login"]
               :compiler {:output-to     "resources/public/js/login.js"
                          :optimizations :whitespace
                          :pretty-print  true
+                         :externs ["lib/jquery-2.1.3.min.js", "lib/bootstrap.min.js"]
                          }}]}
 
   :main books.handler

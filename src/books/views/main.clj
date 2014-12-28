@@ -5,11 +5,15 @@
 
 (defn with-css []
   (list
-    (include-css "/css/main.css")))
+    (include-css "/css/main.css")
+    (include-css "/css/bootstrap.min.css")
+    (include-css "/css/bootstrap-theme.min.css")))
 
 (defn with-js []
   (list
-    (include-js "http://fb.me/react-0.9.0.js")
+    (include-js "/lib/jquery-2.1.3.min.js")
+    (include-js "//fb.me/react-0.9.0.js")
+    (include-js "/lib/bootstrap.min.js")
     (include-js "/js/main.js")))
 
 (defn say [content]

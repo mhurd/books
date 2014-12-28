@@ -9,7 +9,7 @@
 
 (defn String->Number [str]
   (if (nil? str)
-    nil
+    0
     (let [n (read-string str)]
       (if (number? n) n nil))))
 

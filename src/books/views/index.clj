@@ -6,12 +6,14 @@
 (defn with-css []
   (list
     (include-css "/css/index.css")
-    (include-css "http://yui.yahooapis.com/pure/0.5.0/pure-min.css")))
+    (include-css "/css/bootstrap.min.css")
+    (include-css "/css/bootstrap-theme.min.css")))
 
 (defn with-js []
   (list
     (include-js "/lib/jquery-2.1.3.min.js")
     (include-js "//fb.me/react-0.9.0.js")
+    (include-js "/lib/bootstrap.min.js")
     (include-js "/js/index.js")))
 
 (defn index-page []
