@@ -12,7 +12,7 @@
 (defn with-js []
   (list
     (include-js "/lib/jquery-2.1.3.min.js")
-    (include-js "//fb.me/react-0.9.0.js")
+    (include-js "//fb.me/react-0.9.0.min.js")
     (include-js "/lib/bootstrap.min.js")
     (include-js "/js/main.js")))
 

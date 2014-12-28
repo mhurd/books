@@ -33,11 +33,13 @@
         :error-handler   set-message})
   )
 
-(defn get-list-price [book]
-  (str "£" (/ (js/parseFloat (get book "listPrice")) 100)))
-
-(defn get-lowest-price [book]
-  (str "£" (/ (js/parseFloat (get book "lowestPrice")) 100)))
+(defn get-price [book key]
+  (let [price (get book key)]
+    (if (nil? price)
+      "no-data"
+      (str "£" (/ (js/parseFloat price) 100))
+      )
+    ))
 
 (defn single-book-view [book owner]
   (println (str "Rendering book: " (get book "title")))
@@ -63,8 +65,8 @@
             [:dt "ASIN:"] [:dd (get book "asin")]
             [:dt "ISBN:"] [:dd (get book "isbn")]
             [:dt "EAN:"] [:dd (get book "ean")]
-            [:dt "List price:"] [:dd (get-list-price book)]
-            [:dt "Lowest Price:"] [:dd (get-lowest-price book)]
+            [:dt "List price:"] [:dd (get-price book "listPrice")]
+            [:dt "Lowest Price:"] [:dd (get-price book "lowestPrice")]
             [:dt "Total Available:"] [:dd (get book "totalAvailable")]
             [:dt] [:dd
                    [:a {:href (get book "amazonPageUrl") :target "_blank"}
