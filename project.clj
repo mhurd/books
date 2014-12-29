@@ -6,12 +6,12 @@
 
   :source-paths ["src" "src/books"]
 
-  :dependencies [[compojure "1.2.1"]
-                 [ring "1.3.1"]
-                 [org.clojure/clojurescript "0.0-2371"]
+  :dependencies [[compojure "1.3.1"]
+                 [ring "1.3.2"]
+                 [org.clojure/clojurescript "0.0-2511"]
                  [org.clojure/clojure "1.6.0"]
                  [org.clojure/core.async "0.1.346.0-17112a-alpha"]
-                 [om "0.8.0-alpha1"]
+                 [om "0.8.0-beta5"]
                  [http-kit "2.1.18"]
                  [cljs-ajax "0.3.3"]
                  [com.cemerick/url "0.1.1"]
@@ -21,11 +21,13 @@
                  [org.clojure/data.xml "0.0.8"]
                  [org.clojure/data.json "0.2.5"]
                  [secretary "1.2.1"]                        ;; see http://spootnik.org/entries/2014/10/26_from-angularjs-to-om-a-walk-through.html
-                 [sablono "0.2.22"]
+                 [sablono "0.2.22"]                         ;; see https://github.com/r0man/sablono
                  [cljs-ajax "0.3.3"]
                  [prismatic/om-tools "0.3.6"]
-                 [com.cognitect/transit-clj "0.8.259"]
-                 [com.cognitect/transit-cljs "0.8.194"]]
+                 [com.cognitect/transit-clj "0.8.259"]      ;; see https://github.com/cognitect/transit-format
+                 [com.cognitect/transit-cljs "0.8.194"]
+                 [com.novemberain/monger "2.0.0"]           ;; see http://clojuremongodb.info/articles/getting_started.html
+                 ]
 
   :plugins [[lein-ring "0.8.13"]
             [lein-cljsbuild "1.0.3"]]

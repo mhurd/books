@@ -9,7 +9,7 @@
 (enable-console-print!)
 
 (def app-state (atom {:message "",
-                      :books '()}))
+                      :books []}))
 
 (defn set-message [msg]
   (let [s (str msg)]
@@ -21,7 +21,7 @@
   )
 
 (defn set-books [books]
-  (swap! app-state assoc :books (filter #(nil? (get % "error"))  books)) ;; filter out any errors
+  (swap! app-state assoc :books (vec (filter #(nil? (get % "error"))  books))) ;; filter out any errors
   (doseq [b (filter #(comp not nil? (get % "error")) books)] (set-message (get b "error"))) ;; display them though
   )
 
@@ -41,6 +41,15 @@
       )
     ))
 
+(defn get-attribute [book key]
+  (let [val (get book key)]
+    (if (nil? val)
+      "no-data"
+      val
+      )
+    )
+  )
+
 (defn single-book-view [book owner]
   (println (str "Rendering book: " (get book "title")))
   (reify
@@ -55,19 +64,20 @@
             [:img {:class "book-img" :src (get book "largeImage")}]]]
           [:td {:class "book-details-td" :align: "left"}
            [:dl {:class "dl-horizontal details"}
-            [:dt "Title:"] [:dd (get book "title")]
-            [:dt "Author(s):"] [:dd (get book "authors")]
-            [:dt "Publisher:"] [:dd (get book "publisher")]
-            [:dt "Publication Date:"] [:dd (get book "publicationDate")]
-            [:dt "Binding:"] [:dd (get book "binding")]
-            [:dt "Edition:"] [:dd (get book "edition")]
-            [:dt "No. of Pages:"] [:dd (get book "numberOfPages")]
-            [:dt "ASIN:"] [:dd (get book "asin")]
-            [:dt "ISBN:"] [:dd (get book "isbn")]
-            [:dt "EAN:"] [:dd (get book "ean")]
+            [:dt "Title:"] [:dd (get-attribute book "title")]
+            [:dt "Author(s):"] [:dd (get-attribute book "authors")]
+            [:dt "Publisher:"] [:dd (get-attribute book "publisher")]
+            [:dt "Publication Date:"] [:dd (get-attribute book "publicationDate")]
+            [:dt "Binding:"] [:dd (get-attribute book "binding")]
+            [:dt "Edition:"] [:dd (get-attribute book "edition")]
+            [:dt "Format:"] [:dd (get-attribute book "format")]
+            [:dt "No. of Pages:"] [:dd (get-attribute book "numberOfPages")]
+            [:dt "ASIN:"] [:dd (get-attribute book "asin")]
+            [:dt "ISBN:"] [:dd (get-attribute book "isbn")]
+            [:dt "EAN:"] [:dd (get-attribute book "ean")]
             [:dt "List price:"] [:dd (get-price book "listPrice")]
             [:dt "Lowest Price:"] [:dd (get-price book "lowestPrice")]
-            [:dt "Total Available:"] [:dd (get book "totalAvailable")]
+            [:dt "Total Available:"] [:dd (get-attribute book "totalAvailable")]
             [:dt] [:dd
                    [:a {:href (get book "amazonPageUrl") :target "_blank"}
                         [:img {:src "/img/buy-from-amazon-button.gif" :caption "Buy from Amazon" :alt "Buy from Amazon"}]]]]]

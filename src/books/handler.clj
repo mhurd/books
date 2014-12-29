@@ -53,7 +53,8 @@
 
 (def get-books
   (memoize
-    (fn []
+    (fn [page-size page]
+      (println (str "page-size=" page-size ", page=" page))
       (to-json (map #(do
                   (Thread/sleep 750)
                   (find-by-isbn @access-key @associate-tag @secret %)) isbns)))))
@@ -63,7 +64,7 @@
            (GET "/login" [] (login-page))
            (GET "/echo/:email/:password" [email password] (str "\"" (url-decode email) "'s secret password is " (url-decode password) " (although I probably shouldn't tell you that)\""))
            (GET "/api/books/:id" [id] (to-json (find-by-isbn @access-key @associate-tag @secret id)))
-           (GET "/api/books" [] (get-books))
+           (GET "/api/books" [page-size page] (get-books page-size page))
            (route/resources "/")
            (route/not-found "<p>Page not found.</p>"))
 
