@@ -115,36 +115,46 @@
         item (get-item-element root)]
     (let [error (get-error root)]                           ;; see if this is an error response
       (if error
-        {"error" error}                                      ;; return the error
+        {:error error}                                      ;; return the error
         (sorted-map
-          "asin" (get-asin item),
-          "authors" (get-author item),
-          "binding" (get-binding item),
-          "amazonPageUrl" (get-detail-page-url item),
-          "ean" (get-ean item),
-          "edition" (get-edition item),
-          "format" (get-format item),
-          "isbn" (get-isbn item),
-          "listPrice" (get-list-price item),
-          "lowestPrice" (safe-min (get-lowest-new-price item) (get-lowest-used-price item)), ;; compatibility
-          "lowestNewPrice" (get-lowest-new-price item),
-          "lowestUsedPrice" (get-lowest-used-price item),
-          "numberOfPages" (get-number-of-pages item),
-          "title" (get-title item),
-          "totalAvailable" (+ (get-total-new item) (get-total-used item))
-          "totalNew" (get-total-new item),
-          "totalUsed" (get-total-used item),
-          "smallImage" (get-small-image item),
-          "mediumImage" (get-medium-image item),
-          "largeImage" (get-large-image item),
-          "smallBookCover" (get-medium-image item),
-          "largeBookCover" (get-large-image item),
-          "lastPriceUpdateTimestamp" (System/currentTimeMillis),
-          "publisher" (get-publisher item),
-          "publicationDate" (get-publication-date item)))))
+          :asin (get-asin item),
+          :authors (get-author item),
+          :binding (get-binding item),
+          :amazonPageUrl (get-detail-page-url item),
+          :ean (get-ean item),
+          :edition (get-edition item),
+          :format (get-format item),
+          :isbn (get-isbn item),
+          :listPrice (get-list-price item),
+          :lowestPrice (safe-min (get-lowest-new-price item) (get-lowest-used-price item)), ;; compatibility
+          :lowestNewPrice (get-lowest-new-price item),
+          :lowestUsedPrice (get-lowest-used-price item),
+          :numberOfPages (get-number-of-pages item),
+          :title (get-title item),
+          :totalAvailable (+ (get-total-new item) (get-total-used item))
+          :totalNew (get-total-new item),
+          :totalUsed (get-total-used item),
+          :smallImage (get-small-image item),
+          :mediumImage (get-medium-image item),
+          :largeImage (get-large-image item),
+          :smallBookCover (get-medium-image item),
+          :largeBookCover (get-large-image item),
+          :lastPriceUpdateTimestamp (System/currentTimeMillis),
+          :publisher (get-publisher item),
+          :publicationDate (get-publication-date item)))))
   )
 
-(defn to-json [amazon-xml]
+(defn map-to-json [json]
+  (let [out (ByteArrayOutputStream. 4096)
+        w (writer out :json-verbose)]
+    (try
+      (write w json)
+      (.toString out "UTF-8")
+      (finally (.close out)))
+    )
+  )
+
+(defn xml-to-json [amazon-xml]
   (let [out (ByteArrayOutputStream. 4096)
         w (writer out :json-verbose)]
     (try

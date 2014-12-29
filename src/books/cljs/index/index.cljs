@@ -21,8 +21,8 @@
   )
 
 (defn set-books [books]
-  (swap! app-state assoc :books (vec (filter #(nil? (get % "error"))  books))) ;; filter out any errors
-  (doseq [b (filter #(comp not nil? (get % "error")) books)] (set-message (get b "error"))) ;; display them though
+  (swap! app-state assoc :books (vec (filter #(nil? (get % :error))  books))) ;; filter out any errors
+  (doseq [b (filter #(comp not nil? (get % :error)) books)] (set-message (get b :error))) ;; display them though
   )
 
 (defn get-books []
@@ -50,38 +50,48 @@
     )
   )
 
+(defn has-increased-in-value [book]
+  (let [listPrice (get book :listPrice)
+        lowestPrice (get book :lowestPrice)]
+    (if (or (nil? lowestPrice) (nil? listPrice))
+      false
+      (> lowestPrice listPrice)
+    )
+    ))
+
 (defn single-book-view [book owner]
-  (println (str "Rendering book: " (get book "title")))
+  ;;(println (str "Rendering book: " (get book :title)))
   (reify
     om/IRender
     (render [_]
       (html
         [:div {:class "book-div"}
-        [:table {:class "table"}
-         [:tr
-          [:td {:class "book-img-td" :align "right"}
-           [:a {:href (str "http://localhost:3000/api/books/" (get book "isbn")) :target "_blank"}
-            [:img {:class "book-img" :src (get book "largeImage")}]]]
-          [:td {:class "book-details-td" :align: "left"}
-           [:dl {:class "dl-horizontal details"}
-            [:dt "Title:"] [:dd (get-attribute book "title")]
-            [:dt "Author(s):"] [:dd (get-attribute book "authors")]
-            [:dt "Publisher:"] [:dd (get-attribute book "publisher")]
-            [:dt "Publication Date:"] [:dd (get-attribute book "publicationDate")]
-            [:dt "Binding:"] [:dd (get-attribute book "binding")]
-            [:dt "Edition:"] [:dd (get-attribute book "edition")]
-            [:dt "Format:"] [:dd (get-attribute book "format")]
-            [:dt "No. of Pages:"] [:dd (get-attribute book "numberOfPages")]
-            [:dt "ASIN:"] [:dd (get-attribute book "asin")]
-            [:dt "ISBN:"] [:dd (get-attribute book "isbn")]
-            [:dt "EAN:"] [:dd (get-attribute book "ean")]
-            [:dt "List price:"] [:dd (get-price book "listPrice")]
-            [:dt "Lowest Price:"] [:dd (get-price book "lowestPrice")]
-            [:dt "Total Available:"] [:dd (get-attribute book "totalAvailable")]
-            [:dt] [:dd
-                   [:a {:href (get book "amazonPageUrl") :target "_blank"}
-                        [:img {:src "/img/buy-from-amazon-button.gif" :caption "Buy from Amazon" :alt "Buy from Amazon"}]]]]]
-          ]]]))))
+          [:legend (get-attribute book :title)]
+          [:table {:class "table"}
+           [:tr {:class (if (has-increased-in-value book) "increased-value" "decreased-value")}
+            [:td {:class "book-img-td" :align "right"}
+             [:a {:href (str "http://localhost:3000/api/books/" (get book :isbn)) :target "_blank"}
+              [:img {:class "book-img" :src (get book :largeImage)}]]]
+            [:td {:class "book-details-td" :align: "left"}
+             [:dl {:class "dl-horizontal details"}
+              [:dt "Title:"] [:dd (get-attribute book :title)]
+              [:dt "Author(s):"] [:dd (get-attribute book :authors)]
+              [:dt "Publisher:"] [:dd (get-attribute book :publisher)]
+              [:dt "Publication Date:"] [:dd (get-attribute book :publicationDate)]
+              [:dt "Binding:"] [:dd (get-attribute book :binding)]
+              [:dt "Edition:"] [:dd (get-attribute book :edition)]
+              [:dt "Format:"] [:dd (get-attribute book :format)]
+              [:dt "No. of Pages:"] [:dd (get-attribute book :numberOfPages)]
+              [:dt "ASIN:"] [:dd (get-attribute book :asin)]
+              [:dt "ISBN:"] [:dd (get-attribute book :isbn)]
+              [:dt "EAN:"] [:dd (get-attribute book :ean)]
+              [:dt "List price:"] [:dd (get-price book :listPrice)]
+              [:dt "Lowest Price:"] [:dd (get-price book :lowestPrice)]
+              [:dt "Total Available:"] [:dd (get-attribute book :totalAvailable)]
+              [:dt] [:dd
+                     [:a {:href (get book :amazonPageUrl) :target "_blank"}
+                          [:img {:src "/img/buy-from-amazon-button.gif" :caption "Buy from Amazon" :alt "Buy from Amazon"}]]]]]
+            ]]]))))
 
 (defn index-view [app owner]
   (reify
