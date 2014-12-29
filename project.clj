@@ -16,6 +16,7 @@
                  [cljs-ajax "0.3.3"]
                  [com.cemerick/url "0.1.1"]
                  [org.clojure/tools.logging "0.3.1"]
+                 [log4j/log4j "1.2.17"]
                  [jayq "2.5.2"]
                  [org.clojure/data.zip "0.1.1"]
                  [org.clojure/data.xml "0.0.8"]

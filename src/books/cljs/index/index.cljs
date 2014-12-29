@@ -28,7 +28,7 @@
 
 (defn get-books []
   (println "Getting books...")
-  (GET "http://localhost:3000/api/books"
+  (GET "/api/books"
        {:response-format :transit,
         :handler         set-books,
         :error-handler   set-message})
@@ -71,7 +71,7 @@
           [:table {:class "table"}
            [:tr {:class (if (has-increased-in-value book) "increased-value" "decreased-value")}
             [:td {:class "book-img-td" :align "right"}
-             [:a {:href (str "http://localhost:3000/api/books/" (get book :isbn)) :target "_blank"}
+             [:a {:href (str "/api/books/" (get book :isbn)) :target "_blank"}
               [:img {:class "book-img" :src (get book :largeImage)}]]]
             [:td {:class "book-details-td" :align: "left"}
              [:dl {:class "dl-horizontal details"}

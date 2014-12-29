@@ -10,7 +10,9 @@
             [compojure.handler :refer [site]]
             [compojure.route :as route]
             [compojure.core :refer [defroutes GET POST]]
-            [cemerick.url :refer [url-decode]]))
+            [cemerick.url :refer [url-decode]]
+            [clojure.tools.logging :as log])
+  (:gen-class))
 
 ;; Set up to use http-kit rather than usual ring Jetty server,
 ;; see: http://www.http-kit.org/migration.html
@@ -55,6 +57,7 @@
             "8881587904", "3869307889", "B003WF4UCY", "2953451617", "B007RC8EYS"])
 
 (defn get-books [page-size page]
+  (log/info "Getting books...")
   (if (no-mongo?)
     ((memoize
       (fn [page-size page]
@@ -79,7 +82,8 @@
 
 (defn -main [& args]                                        ;; entry point, lein run will pick up and start from here
   (let [handler (stacktrace/wrap-stacktrace (site main-routes))]
-    (println args)
+
+    (log/info "Starting handler...")
     (reset! access-key (first args))
     (reset! associate-tag (second args))
     (reset! secret (second (rest args)))
