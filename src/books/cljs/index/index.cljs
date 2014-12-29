@@ -21,9 +21,10 @@
   )
 
 (defn set-books [books]
-  (swap! app-state assoc :books (vec (filter #(nil? (get % :error))  books))) ;; filter out any errors
-  (doseq [b (filter #(comp not nil? (get % :error)) books)] (set-message (get b :error))) ;; display them though
-  )
+  (let [sorted (sort-by :title books)]
+  (swap! app-state assoc :books (vec (filter #(nil? (get % :error)) sorted))) ;; filter out any errors
+  (doseq [b (filter #(comp not nil? (get % :error)) sorted)] (set-message (get b :error))) ;; display them though
+  ))
 
 (defn get-books []
   (println "Getting books...")
