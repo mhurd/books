@@ -19,7 +19,7 @@
 
 ;; run the server with 'lein run'
 
-(defn no-mongo? [] true)
+(defn no-mongo? [] false) ;; change this to true to load direct from Amazon API
 
 (def access-key (atom nil))
 (def associate-tag (atom nil))
