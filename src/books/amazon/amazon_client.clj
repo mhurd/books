@@ -110,3 +110,8 @@
 (defn find-offer-summary-by-isbn [access-key associate-tag secret isbn]
   (find-on-amazon access-key associate-tag secret (sorted-map "ResponseGroup" "OfferSummary" "Operation" "ItemLookup" "ItemId" isbn "IdType" "ISBN"))
   )
+
+(defn get-finders [access-key associate-tag secret]
+  {:details (partial find-by-isbn access-key associate-tag secret)
+   :offer-summary (partial find-offer-summary-by-isbn associate-tag secret)}
+  )

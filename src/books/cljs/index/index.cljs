@@ -21,9 +21,9 @@
   )
 
 (defn set-books [books]
-  (let [sorted (sort-by :title books)]
-  (swap! app-state assoc :books (vec (filter #(nil? (get % :error)) sorted))) ;; filter out any errors
-  (doseq [b (filter #(comp not nil? (get % :error)) sorted)] (set-message (get b :error))) ;; display them though
+  (let [sorted (sort-by (partial get "title") books)]
+  (swap! app-state assoc :books (vec (filter #(nil? (get % "error")) sorted))) ;; filter out any errors
+  (doseq [b (filter #(comp not nil? (get % "error")) sorted)] (set-message (get b "error"))) ;; display them though
   ))
 
 (defn get-books []
@@ -34,11 +34,11 @@
         :error-handler   set-message})
   )
 
-(defn get-price [book key]
-  (let [price (get book key)]
+(defn get-price [book price-key]
+  (let [price (get book price-key)]
     (if (nil? price)
       "no-data"
-      (str "£" (/ (js/parseFloat price) 100))
+      (str "£" (.toFixed (/ (js/parseFloat price) 100) 2))
       )
     ))
 

@@ -16,7 +16,13 @@
                  [cljs-ajax "0.3.3"]
                  [com.cemerick/url "0.1.1"]
                  [org.clojure/tools.logging "0.3.1"]
-                 [log4j/log4j "1.2.17"]
+                 [log4j/log4j "1.2.17"
+                  :exclusions [javax.mail/mail
+                               javax.jms/jms
+                               com.sun.jdkmk/jmxtools
+                               com.sun.jmx/jmxri]]
+                 [log4j/apache-log4j-extras "1.2.17"]
+                 [org.slf4j/slf4j-log4j12 "1.7.9"]
                  [jayq "2.5.2"]
                  [org.clojure/data.zip "0.1.1"]
                  [org.clojure/data.xml "0.0.8"]
@@ -28,6 +34,7 @@
                  [com.cognitect/transit-clj "0.8.259"]      ;; see https://github.com/cognitect/transit-format
                  [com.cognitect/transit-cljs "0.8.194"]
                  [com.novemberain/monger "2.0.0"]           ;; see http://clojuremongodb.info/articles/getting_started.html
+                 [clojurewerkz/quartzite "2.0.0"]           ;; see http://clojurequartz.info/articles/getting_started.html
                  ]
 
   :plugins [[lein-ring "0.8.13"]
@@ -38,24 +45,30 @@
   :cljsbuild {
     :builds [{:source-paths ["src/books/cljs/index"]
               :compiler {:output-to     "resources/public/js/index.js"
-                         :optimizations :whitespace
-                         :pretty-print  true
-                         :externs       ["lib/jquery-2.1.3.min.js", "lib/bootstrap.min.js"]
+                         :optimizations :advanced
+                         :pretty-print  false
+                         :externs       ["externs/externs.js",
+                                         "resources/public/lib/jquery-2.1.3.min.js",
+                                         "resources/public/lib/bootstrap.min.js"]
                          }}
              {:source-paths ["src/books/cljs/main"]
               :compiler {:output-to "resources/public/js/main.js"
-                         :optimizations :whitespace
-                         :pretty-print true
-                         :externs ["lib/jquery-2.1.3.min.js", "lib/bootstrap.min.js"]
+                         :optimizations :advanced
+                         :pretty-print false
+                         :externs ["externs/externs.js",
+                                   "resources/public/lib/jquery-2.1.3.min.js",
+                                   "resources/public/lib/bootstrap.min.js"]
                          }}
              {:source-paths ["src/books/cljs/login"]
               :compiler {:output-to     "resources/public/js/login.js"
-                         :optimizations :whitespace
-                         :pretty-print  true
-                         :externs ["lib/jquery-2.1.3.min.js", "lib/bootstrap.min.js"]
+                         :optimizations :advanced
+                         :pretty-print  false
+                         :externs ["externs/externs.js",
+                                   "resources/public/lib/jquery-2.1.3.min.js",
+                                   "resources/public/lib/bootstrap.min.js"]
                          }}]}
 
-  :main books.handler
+  :main books.main
 
   :profiles
     {:dev {:dependencies [[ring-mock "0.1.5"]

@@ -1,17 +1,18 @@
 (ns books.handler
-  (:use [org.httpkit.server :only [run-server]])
-  (:require [books.views.main :refer [say]]
-            [books.views.login :refer [login-page]]
-            [books.views.index :refer [index-page]]
-            [books.amazon.amazon-client :refer [find-by-isbn]]
-            [books.amazon.amazon-json :refer [xml-to-json map-to-json]]
-            [mongo.mongo-repository :as mongo]
-            [ring.middleware.stacktrace :as stacktrace]
-            [compojure.handler :refer [site]]
-            [compojure.route :as route]
-            [compojure.core :refer [defroutes GET POST]]
-            [cemerick.url :refer [url-decode]]
-            [clojure.tools.logging :as log])
+  (:require
+    [org.httpkit.server :refer [run-server]]
+    [books.views.main :refer [say]]
+    [books.views.login :refer [login-page]]
+    [books.views.index :refer [index-page]]
+    [books.amazon.amazon-client :refer [find-by-isbn]]
+    [books.amazon.amazon-json :refer [xml-to-json map-to-json]]
+    [books.mongo.mongo-repository :as mongo]
+    [ring.middleware.stacktrace :as stacktrace]
+    [compojure.handler :refer [site]]
+    [compojure.route :as route]
+    [compojure.core :refer [routes GET POST]]
+    [cemerick.url :refer [url-decode]]
+    [clojure.tools.logging :as log])
   (:gen-class))
 
 ;; Set up to use http-kit rather than usual ring Jetty server,
@@ -20,12 +21,6 @@
 ;; https://github.com/ptaoussanis/sente
 
 ;; run the server with 'lein run'
-
-(defn no-mongo? [] false) ;; change this to true to load direct from Amazon API
-
-(def access-key (atom nil))
-(def associate-tag (atom nil))
-(def secret (atom nil))
 
 (def isbns ["081095415X", "3865216455", "3822856215", "0714846554", "3775727507", "3865214517",
             ;;"3865212336", "093511209X", "190707130X", "1905712022", "0393065642", "3775729941",
@@ -54,37 +49,35 @@
             ;;;;"3775731482", "0974283673", "1847960006", "1567923593", "0500512515", "0954709128",
             ;;"1576874478", "1907946144", "0957434103", "091501355X", "1907893113", "1597112135",
             ;;"0500301247", "0811872238", "1617751677", "0810998327", "3775727388", "8857204715",
-            "8881587904", "3869307889", "B003WF4UCY", "2953451617", "B007RC8EYS"])
+            "8881587904", "3869307889", "B003WF4UCY", "2953451617", "B007RC8EYS", "3829028911",
+            "187331924X", "1873319150"])
 
-(defn get-books [page-size page]
+(defn no-mongo? [] false) ;; change this to true to load direct from Amazon API
+
+(defn get-books [access-key associate-tag secret page-size page]
   (log/info "Getting books...")
   (if (no-mongo?)
     ((memoize
       (fn [page-size page]
         (let [json (xml-to-json (map #(do
                                    (Thread/sleep 1000)
-                                   (find-by-isbn @access-key @associate-tag @secret %)) isbns))]
-          ;;(println json)
+                                   (find-by-isbn access-key associate-tag secret %)) isbns))]
           json)
         )) page-size page)
     (map-to-json (mongo/get-books))
     )
   )
 
-(defroutes main-routes
-           (GET "/" [] (index-page))
-           (GET "/login" [] (login-page))
-           (GET "/echo/:email/:password" [email password] (str "\"" (url-decode email) "'s secret password is " (url-decode password) " (although I probably shouldn't tell you that)\""))
-           (GET "/api/books/:id" [id] (xml-to-json (find-by-isbn @access-key @associate-tag @secret id)))
-           (GET "/api/books" [page-size page] (get-books page-size page))
-           (route/resources "/")
-           (route/not-found "<p>Page not found.</p>"))
+;; don't use the defroutes macro as ther eis no nice way to inject app-state into it without globals
+(defn main-routes [access-key associate-tag secret]
+  (routes
+    (GET "/" [] (index-page))
+    (GET "/login" [] (login-page))
+    (GET "/echo/:email/:password" [email password] (str "\"" (url-decode email) "'s secret password is " (url-decode password) " (although I probably shouldn't tell you that)\""))
+    (GET "/api/books/:id" [id] (xml-to-json (find-by-isbn access-key associate-tag secret id)))
+    (GET "/api/books" [page-size page] (get-books access-key associate-tag secret page-size page))
+    (route/resources "/")
+    (route/not-found "<p>Page not found.</p>")))
 
-(defn -main [& args]                                        ;; entry point, lein run will pick up and start from here
-  (let [handler (stacktrace/wrap-stacktrace (site main-routes))]
-
-    (log/info "Starting handler...")
-    (reset! access-key (first args))
-    (reset! associate-tag (second args))
-    (reset! secret (second (rest args)))
-    (run-server handler {:port 3000})))
+(defn get-handler [access-key associate-tag secret]         ;; these args will be used when the macro is expended
+  (stacktrace/wrap-stacktrace (site (main-routes access-key associate-tag secret))))
