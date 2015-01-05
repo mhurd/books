@@ -1,9 +1,8 @@
 (ns books.handler
   (:require
     [org.httpkit.server :refer [run-server]]
-    [books.views.main :refer [say]]
     [books.views.login :refer [login-page]]
-    [books.views.index :refer [index-page]]
+    [books.views.books :refer [index-page]]
     [books.amazon.amazon-client :refer [find-by-isbn]]
     [books.amazon.amazon-json :refer [xml-to-json map-to-json]]
     [books.mongo.mongo-repository :as mongo]
@@ -68,7 +67,7 @@
     )
   )
 
-;; don't use the defroutes macro as ther eis no nice way to inject app-state into it without globals
+;; don't use the defroutes macro as there is no nice way to inject app-state into it without globals
 (defn main-routes [access-key associate-tag secret]
   (routes
     (GET "/" [] (index-page))

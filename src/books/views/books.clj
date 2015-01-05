@@ -1,11 +1,11 @@
-(ns books.views.main
+(ns books.views.books
   (:require
     [hiccup
      [page :refer [html5 include-js include-css]]]))
 
 (defn with-css []
   (list
-    (include-css "/css/main.css")
+    (include-css "/css/books.css")
     (include-css "/css/bootstrap.min.css")
     (include-css "/css/bootstrap-theme.min.css")))
 
@@ -14,14 +14,14 @@
     (include-js "/lib/jquery-2.1.3.min.js")
     (include-js "/lib/react-0.12.2.min.js")
     (include-js "/lib/bootstrap.min.js")
-    (include-js "/js/main.js")))
+    (include-js "/js/books.js")))
 
-(defn say [content]
+(defn index-page []
   (html5
     [:head
-     [:title "books"]
+     [:title "index"]
      [:meta {"name" "viewport" "content" "width=device-width, initial-scale=1.0"}]
      (with-css)]
     [:body
-     [:div {:id "root-page"} content]
+     [:div {:id "index-page"}]
      (with-js)]))

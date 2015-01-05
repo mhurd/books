@@ -144,6 +144,24 @@
          :publicationDate (get-publication-date item)))))
   )
 
+(defn offer-summary-to-map [amazon-xml]
+  (let [doc (parse-str amazon-xml)
+        root (xml-zip doc)
+        item (get-item-element root)]
+    (let [error (get-error root)]                           ;; see if this is an error response
+      (if error
+        {:error error}                                      ;; return the error
+        (sorted-map
+          :asin (get-asin item),
+          :lowestPrice (safe-min (get-lowest-new-price item) (get-lowest-used-price item)), ;; compatibility
+          :lowestNewPrice (get-lowest-new-price item),
+          :lowestUsedPrice (get-lowest-used-price item),
+          :totalAvailable (+ (get-total-new item) (get-total-used item))
+          :totalNew (get-total-new item),
+          :totalUsed (get-total-used item),
+          :lastPriceUpdateTimestamp (System/currentTimeMillis)))))
+  )
+
 (defn map-to-json [json]
   (let [out (ByteArrayOutputStream. 4096)
         w (writer out :json-verbose)]

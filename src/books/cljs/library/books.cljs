@@ -1,4 +1,4 @@
-(ns index
+(ns library.books
   (:require [clojure.browser.repl]
             [om.core :as om :include-macros true]
             [sablono.core :as html :refer-macros [html]]
@@ -60,8 +60,39 @@
     )
     ))
 
+(defn format-timestamp [timestamp]
+  (let [date (js/Date. (js/parseInt timestamp))
+        formatted (.toUTCString date)]
+    formatted
+    )
+  )
+
+(defn light-book-view [book owner]
+  (reify
+    om/IRender
+    (render [_]
+      (html
+        [:div {:class "book-div"}
+         [:legend (str (get-attribute book :title))]
+         [:table {:class "table"}
+          [:tr {:class (if (has-increased-in-value book) "increased-value" "decreased-value")}
+           [:td {:class "book-img-td" :align "right"}
+            [:a {:href (get book :amazonPageUrl) :target "_blank"}
+             [:img {:class "book-img" :src (get book :mediumImage)}]]]
+           [:td {:class "book-details-td" :align: "left"}
+            [:dl {:class "dl-horizontal details"}
+             [:dt "Author(s):"] [:dd (get-attribute book :authors)]
+             [:dt "Publisher:"] [:dd (get-attribute book :publisher)]
+             [:dt "Publication Date:"] [:dd (get-attribute book :publicationDate)]
+             [:dt "ASIN:"] [:dd (get-attribute book :asin)]
+             [:dt "Total Available:"] [:dd (get-attribute book :totalAvailable)]
+             [:dt "List price:"] [:dd (get-price book :listPrice)]
+             [:dt "Lowest Price:"] [:dd (get-price book :lowestPrice)]
+             [:dt "Price's Updated:"] [:dd (format-timestamp (get-attribute book :lastPriceUpdateTimestamp))]
+             ]]
+           ]]]))))
+
 (defn single-book-view [book owner]
-  ;;(println (str "Rendering book: " (get book :title)))
   (reify
     om/IRender
     (render [_]
@@ -87,6 +118,7 @@
               [:dt "ISBN:"] [:dd (get-attribute book :isbn)]
               [:dt "EAN:"] [:dd (get-attribute book :ean)]
               [:dt "List price:"] [:dd (get-price book :listPrice)]
+              [:dt "Price's Updated:"] [:dd (format-timestamp (get-attribute book :lastPriceUpdateTimestamp))]
               [:dt "Lowest Price:"] [:dd (get-price book :lowestPrice)]
               [:dt "Total Available:"] [:dd (get-attribute book :totalAvailable)]
               [:dt] [:dd
@@ -106,7 +138,7 @@
              [:div {:id "message" :class "messages"}
               [:label (:message app)]]
              [:div
-              (om/build-all single-book-view (:books app))]
+              (om/build-all light-book-view (:books app))]
              ]))))
 
 (om/root index-view app-state

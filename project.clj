@@ -43,8 +43,8 @@
   :hooks [leiningen.cljsbuild]
 
   :cljsbuild {
-    :builds [{:source-paths ["src/books/cljs/index"]
-              :compiler {:output-to     "resources/public/js/index.js"
+    :builds [{:source-paths ["src/books/cljs/library"]
+              :compiler {:output-to     "resources/public/js/books.js"
                          :optimizations :advanced
                          :pretty-print  false
                          :externs       ["externs/externs.js",

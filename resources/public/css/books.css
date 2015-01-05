@@ -3,13 +3,13 @@
 }
 
 .book-img-td {
-    width: 200px;
+    width: 100px;
+    text-align: center;
 }
 
 .book-img {
     float: right;
-    width: 200px;
-    height: auto;
+    height: 120px;
 }
 
 .content {
@@ -21,12 +21,12 @@
 .details dt {
     font-family: sans-serif;
     font-weight: bolder;
-    font-size: small;
+    font-size: x-small;
 }
 
 .details dd {
     font-family: sans-serif;
-    font-size: small;
+    font-size: x-small;
 }
 
 .increased-value {

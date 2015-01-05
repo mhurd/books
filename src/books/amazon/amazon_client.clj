@@ -41,7 +41,6 @@
                "Version" api-version,
                "AWSAccessKeyId" accessKey,
                "AssociateTag" associateTag,
-               "SearchIndex" "Books",
                "Condition" "All",
                "Offer" "All",
                "ResponseGroup" "ItemAttributes,OfferSummary,Images"))))
@@ -104,11 +103,13 @@
     ))
 
 (defn find-by-isbn [access-key associate-tag secret isbn]
-  (find-on-amazon access-key associate-tag secret (sorted-map "Operation" "ItemLookup" "ItemId" isbn "IdType" "ISBN"))
+  ;; ASIN is the same as the ISBN-10
+  (find-on-amazon access-key associate-tag secret (sorted-map "Operation" "ItemLookup" "ItemId" isbn "IdType" "ASIN"))
   )
 
 (defn find-offer-summary-by-isbn [access-key associate-tag secret isbn]
-  (find-on-amazon access-key associate-tag secret (sorted-map "ResponseGroup" "OfferSummary" "Operation" "ItemLookup" "ItemId" isbn "IdType" "ISBN"))
+  ;; ASIN is the same as the ISBN-10
+  (find-on-amazon access-key associate-tag secret (sorted-map "ResponseGroup" "OfferSummary" "Operation" "ItemLookup" "ItemId" isbn "IdType" "ASIN"))
   )
 
 (defn get-finders [access-key associate-tag secret]

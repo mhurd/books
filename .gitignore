@@ -18,3 +18,4 @@ pom.xml
 *.iml
 .idea
 test/books/amazon/run_lookup.clj
+resources/public/js/books.js
