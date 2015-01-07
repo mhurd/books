@@ -1258,7 +1258,7 @@ dd {
   margin-left: 0;
 }
 @media (min-width: 768px) {
-  .dl-horizontal dt {
+  .dd dt {
     float: left;
     width: 160px;
     overflow: hidden;

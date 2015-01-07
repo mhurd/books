@@ -6,8 +6,7 @@
 (defn with-css []
   (list
     (include-css "/css/books.css")
-    (include-css "/css/bootstrap.min.css")
-    (include-css "/css/bootstrap-theme.min.css")))
+    (include-css "/css/bootstrap.min.css")))
 
 (defn with-js []
   (list
@@ -19,9 +18,10 @@
 (defn index-page []
   (html5
     [:head
-     [:title "index"]
+     [:title "Mike's Books"]
      [:meta {"name" "viewport" "content" "width=device-width, initial-scale=1.0"}]
      (with-css)]
     [:body
-     [:div {:id "index-page"}]
+     [:div {:id "book-list"}]
+     [:div {:id "book" :class "content"}]
      (with-js)]))

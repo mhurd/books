@@ -6,8 +6,7 @@
 (defn with-css []
   (list
     (include-css "/css/login.css")
-    (include-css "/css/bootstrap.min.css")
-    (include-css "/css/bootstrap-theme.min.css")))
+    (include-css "/css/bootstrap.min.css")))
 
 (defn with-js []
   (list
