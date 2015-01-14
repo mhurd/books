@@ -8,7 +8,12 @@
 
 (enable-console-print!)
 
-(def app-state (atom {:books [],
+;; Browser History
+;; https://github.com/fmw/vix/blob/master/src/cljs/src/util.cljs
+;; https://github.com/fmw/vix/blob/master/src/cljs/src/core.cljs
+
+(def app-state (atom {:sorted-books [],
+                      :indexed-books {},
                       :display {}}))
 
 (defn display-book [book]
@@ -20,8 +25,10 @@
   )
 
 (defn set-books [books]
-  (let [sorted (sort-by :title books)]
-    (swap! app-state assoc :books (vec (filter #(nil? (get % "error")) sorted)))) ;; filter out any errors
+  (let [sorted (sort-by :title books)
+        indexed (zipmap (map #(:asin %) sorted) sorted)]
+    (swap! app-state assoc :sorted-books sorted)
+    (swap! app-state assoc :indexed-books indexed))
   )
 
 (defn handle-error [error]
@@ -90,8 +97,8 @@
         [:div {:class "book-div"}
          [:legend (str (get-attribute book :title))]
          [:table {:class "table"}
-          [:tr {:class (if (has-increased-in-value book) "increased-value" "decreased-value")}
-           [:td {:class "book-img-td" :align "right"}
+          [:tr {:class "book-row"}
+           [:td {:class (str "book-img-td " (if (has-increased-in-value book) "increased-value" "decreased-value")) :align "right"}
             [:img {:class "book-img" :src (get-image book :smallImage) :on-click #(display-book book)}]]
            [:td {:class "book-details-td" :align: "left"}
             [:dl {:class "dl-horizontal details"}
@@ -113,8 +120,8 @@
             [:div {:class "book-div"}
              [:legend (get-attribute (:display app) :title)]
              [:table {:class "table"}
-              [:tr {:class (if (has-increased-in-value book) "increased-value" "decreased-value")}
-               [:td {:class "large-book-img-td" :align "right"}
+              [:tr {:class "book-row"}
+               [:td {:class (str "large-book-img-td " (if (has-increased-in-value book) "increased-value" "decreased-value")) :align "right"}
                 [:img {:class "large-book-img" :src (get-image book :largeImage) :on-click #(display-index)}]]
                [:td {:class "book-details-td" :align: "left"}
                 [:dl {:class "dl-horizontal details"}
@@ -151,7 +158,7 @@
       (html
         (if (empty? (:display app))
           [:div {:class "content"}
-            (om/build-all light-book-view (:books app))]
+            (om/build-all light-book-view (:sorted-books app))]
           [:div {:class "content"}])))))
 
 (om/root index-view app-state

@@ -46,11 +46,15 @@ dl {
 }
 
 .increased-value {
-    background-color: lightgreen;
+    background-color: #97dc96;
 }
 
 .decreased-value {
-    background-color: darksalmon;
+    background-color: #e89276;
+}
+
+.book-row {
+    background-color: #e3e3e3;
 }
 
 .messages {
