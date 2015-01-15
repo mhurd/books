@@ -4,7 +4,7 @@
             [sablono.core :as html :refer-macros [html]]
             [ajax.core :refer [GET POST]]
             [cemerick.url :refer [url-encode]]
-            [jayq.core :refer [$ fade-in fade-out]]))
+            [jayq.core :refer [$]]))
 
 (enable-console-print!)
 
@@ -14,10 +14,15 @@
 
 (def app-state (atom {:sorted-books [],
                       :indexed-books {},
-                      :display {}}))
+                      :display {},
+                      :scroll-pos 0}))
 
 (defn display-book [book]
-  (swap! app-state assoc :display book)
+  (let [current-scroll (.scrollTop ($ js/document))]
+    ;; save the current scroll position for when we return
+    (swap! app-state assoc :scroll-pos current-scroll)
+    (swap! app-state assoc :display book)
+    )
   )
 
 (defn display-index []
@@ -35,7 +40,6 @@
   (println (str error)))
 
 (defn get-books []
-  (println "Getting books...")
   (GET "/api/books"
        {:response-format :transit,
         :handler         set-books,
@@ -93,7 +97,7 @@
   (reify
     om/IRender
     (render [_]
-      (html
+      (html/html
         [:div {:class "book-div"}
          [:legend (str (get-attribute book :title))]
          [:table {:class "table"}
@@ -114,7 +118,7 @@
     om/IRender
     (render [_]
       (let [book (:display app)]
-        (html
+        (html/html
           (if (empty? (:display app))
             [:div {:class "book-div"}]
             [:div {:class "book-div"}
@@ -153,9 +157,17 @@
     (init-state [_]
       (get-books)
       {})
+    om/IDidUpdate
+    (did-update [this prev-props prev-state]
+      ;; return to our saved scroll position for when we
+      ;; come back to the index from viewing a book's full details
+      (let [saved-scroll (:scroll-pos @app-state)]
+        (.scrollTop ($ js/document) saved-scroll)
+        )
+      )
     om/IRenderState
     (render-state [this state]
-      (html
+      (html/html
         (if (empty? (:display app))
           [:div {:class "content"}
             (om/build-all light-book-view (:sorted-books app))]

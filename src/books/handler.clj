@@ -1,7 +1,6 @@
 (ns books.handler
   (:require
     [org.httpkit.server :refer [run-server]]
-    [books.views.login :refer [login-page]]
     [books.views.books :refer [index-page]]
     [books.amazon.amazon-client :refer [find-by-isbn]]
     [books.amazon.amazon-json :refer [xml-to-json map-to-json]]
@@ -45,8 +44,6 @@
 (defn main-routes [access-key associate-tag secret]
   (routes
     (GET "/" [] (index-page))
-    (GET "/login" [] (login-page))
-    (GET "/echo/:email/:password" [email password] (str "\"" (url-decode email) "'s secret password is " (url-decode password) " (although I probably shouldn't tell you that)\""))
     (GET "/api/books/:id" [id] (xml-to-json (find-by-isbn access-key associate-tag secret id)))
     (GET "/api/books" [page-size page] (get-books access-key associate-tag secret page-size page))
     (route/resources "/")
