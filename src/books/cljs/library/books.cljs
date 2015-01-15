@@ -102,8 +102,8 @@
          [:legend (str (get-attribute book :title))]
          [:table {:class "table"}
           [:tr {:class "book-row"}
-           [:td {:class (str "book-img-td " (if (has-increased-in-value book) "increased-value" "decreased-value")) :align "right"}
-            [:img {:class "book-img" :src (get-image book :smallImage) :on-click #(display-book book)}]]
+           [:td {:class (str "book-img-td " (if (has-increased-in-value book) "increased-value" "decreased-value")) :align "right" :on-click #(display-book book)}
+            [:img {:class "book-img" :src (get-image book :smallImage)}]]
            [:td {:class "book-details-td" :align: "left"}
             [:dl {:class "dl-horizontal details"}
              [:dt "Author(s):"] [:dd (get-attribute book :authors)]
@@ -125,8 +125,8 @@
              [:legend (get-attribute (:display app) :title)]
              [:table {:class "table"}
               [:tr {:class "book-row"}
-               [:td {:class (str "large-book-img-td " (if (has-increased-in-value book) "increased-value" "decreased-value")) :align "right"}
-                [:img {:class "large-book-img" :src (get-image book :largeImage) :on-click #(display-index)}]]
+               [:td {:class (str "large-book-img-td " (if (has-increased-in-value book) "increased-value" "decreased-value")) :align "right" :on-click #(display-index)}
+                [:img {:class "large-book-img" :src (get-image book :largeImage)}]]
                [:td {:class "book-details-td" :align: "left"}
                 [:dl {:class "dl-horizontal details"}
                  [:dt "Author(s):"] [:dd (get-attribute book :authors)]

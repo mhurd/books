@@ -13,15 +13,15 @@
     (include-js "/lib/jquery-2.1.3.min.js")
     (include-js "/lib/react-0.12.2.min.js")
     (include-js "/lib/bootstrap.min.js")
-    (include-js "/js/books.js")
-    (include-js "/lib/google-analytics.js")))
+    (include-js "/js/books.js")))
 
 (defn index-page []
   (html5
     [:head
      [:title "Mike's Books"]
      [:meta {"name" "viewport" "content" "width=device-width, initial-scale=1.0"}]
-     (with-css)]
+     (with-css)
+     (include-js "/lib/google-analytics.js")]
     [:body
      [:div {:id "book-list"}]
      [:div {:id "book" :class "content"}]

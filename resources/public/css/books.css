@@ -5,6 +5,7 @@
 .book-img-td {
     width: 75px;
     text-align: center;
+    cursor: pointer;
 }
 
 .book-img {
@@ -16,6 +17,7 @@
 .large-book-img-td {
     width: 160px;
     text-align: center;
+    cursor: pointer;
 }
 
 .large-book-img {
