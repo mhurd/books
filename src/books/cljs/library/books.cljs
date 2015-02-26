@@ -21,56 +21,44 @@
   (let [current-scroll (.scrollTop ($ js/document))]
     ;; save the current scroll position for when we return
     (swap! app-state assoc :scroll-pos current-scroll)
-    (swap! app-state assoc :display book)
-    )
-  )
+    (swap! app-state assoc :display book)))
 
 (defn display-index []
-  (swap! app-state assoc :display {})
-  )
+  (swap! app-state assoc :display {}))
 
 (defn set-books [books]
   (let [sorted (sort-by :title books)
         indexed (zipmap (map #(:asin %) sorted) sorted)]
     (swap! app-state assoc :sorted-books sorted)
-    (swap! app-state assoc :indexed-books indexed))
-  )
+    (swap! app-state assoc :indexed-books indexed)))
 
 (defn handle-error [error]
   (println (str error)))
 
 (defn get-books []
   (GET "/api/books"
-       {:response-format :transit,
-        :handler         set-books,
-        :error-handler   handle-error})
-  )
+    {:response-format :transit,
+     :handler         set-books,
+     :error-handler   handle-error}))
 
 (defn get-price [book price-key]
   (let [price (get book price-key)]
     (if (nil? price)
       "no-data"
-      (str "£" (.toFixed (/ (js/parseFloat price) 100) 2))
-      )
-    ))
+      (str "£" (.toFixed (/ (js/parseFloat price) 100) 2)))))
 
 (defn get-attribute [book key]
   (let [val (get book key)]
     (if (nil? val)
       "no-data"
-      val
-      )
-    )
-  )
+      val)))
 
 (defn has-increased-in-value [book]
   (let [listPrice (get book :listPrice)
         lowestPrice (get book :lowestPrice)]
     (if (or (nil? lowestPrice) (nil? listPrice))
       false
-      (> lowestPrice listPrice)
-    )
-    ))
+      (> lowestPrice listPrice))))
 
 (defn get-price-change [book]
   (let [listPrice (get book :listPrice)
@@ -78,40 +66,35 @@
         difference (- lowestPrice listPrice)]
     (if (or (nil? lowestPrice) (nil? listPrice))
       "?"
-      (str "£" (.toFixed (/ (js/parseFloat difference) 100) 2))
-    )))
+      (str "£" (.toFixed (/ (js/parseFloat difference) 100) 2)))))
 
 (defn format-timestamp [timestamp]
   (let [date (js/Date. (js/parseInt timestamp))
         formatted (.toUTCString date)]
-    formatted
-    )
-  )
+    formatted))
 
 (defn get-image [book key]
   (let [url (get book key)]
-    (if (nil? url) "/img/no-image.jpg" url)
-  ))
+    (if (nil? url) "/img/no-image.jpg" url)))
 
 (defn light-book-view [book owner]
   (reify
     om/IRender
     (render [_]
       (html/html
-        [:div {:class "book-div"}
-         [:legend (str (get-attribute book :title))]
-         [:table {:class "table"}
-          [:tr {:class "book-row"}
-           [:td {:class (str "book-img-td " (if (has-increased-in-value book) "increased-value" "decreased-value")) :align "right" :on-click #(display-book book)}
-            [:img {:class "book-img" :src (get-image book :smallImage)}]]
-           [:td {:class "book-details-td" :align: "left"}
-            [:dl {:class "dl-horizontal details"}
-             [:dt "Author(s):"] [:dd (get-attribute book :authors)]
-             [:dt "ASIN:"] [:dd (get-attribute book :asin)]
-             [:dt "Publisher:"] [:dd (get-attribute book :publisher)]
-             [:dt "Publication Date:"] [:dd (get-attribute book :publicationDate)]
-             [:dt "Price Change:"] [:dd (get-price-change book)]
-             ]]]]]))))
+       [:div {:class "book-div"}
+        [:legend (str (get-attribute book :title))]
+        [:table {:class "table"}
+         [:tr {:class "book-row"}
+          [:td {:class (str "book-img-td " (if (has-increased-in-value book) "increased-value" "decreased-value")) :align "right" :on-click #(display-book book)}
+           [:img {:class "book-img" :src (get-image book :smallImage)}]]
+          [:td {:class "book-details-td" :align: "left"}
+           [:dl {:class "dl-horizontal details"}
+            [:dt "Author(s):"] [:dd (get-attribute book :authors)]
+            [:dt "ASIN:"] [:dd (get-attribute book :asin)]
+            [:dt "Publisher:"] [:dd (get-attribute book :publisher)]
+            [:dt "Publication Date:"] [:dd (get-attribute book :publicationDate)]
+            [:dt "Price Change:"] [:dd (get-price-change book)]]]]]]))))
 
 (defn full-book-view [app owner]
   (reify
@@ -119,37 +102,34 @@
     (render [_]
       (let [book (:display app)]
         (html/html
-          (if (empty? (:display app))
-            [:div {:class "book-div"}]
-            [:div {:class "book-div"}
-             [:legend (get-attribute (:display app) :title)]
-             [:table {:class "table"}
-              [:tr {:class "book-row"}
-               [:td {:class (str "large-book-img-td " (if (has-increased-in-value book) "increased-value" "decreased-value")) :align "right" :on-click #(display-index)}
-                [:img {:class "large-book-img" :src (get-image book :largeImage)}]]
-               [:td {:class "book-details-td" :align: "left"}
-                [:dl {:class "dl-horizontal details"}
-                 [:dt "Author(s):"] [:dd (get-attribute book :authors)]
-                 [:dt "ASIN:"] [:dd (get-attribute book :asin)]
-                 [:dt "ISBN:"] [:dd (get-attribute book :isbn)]
-                 [:dt "EAN:"] [:dd (get-attribute book :ean)]
-                 [:dt "Publisher:"] [:dd (get-attribute book :publisher)]
-                 [:dt "Publication Date:"] [:dd (get-attribute book :publicationDate)]
-                 [:dt "Binding:"] [:dd (get-attribute book :binding)]
-                 [:dt "Edition:"] [:dd (get-attribute book :edition)]
-                 [:dt "Format:"] [:dd (get-attribute book :format)]
-                 [:dt "No. of Pages:"] [:dd (get-attribute book :numberOfPages)]
-                 [:dt "List price:"] [:dd (get-price book :listPrice)]
-                 [:dt "Lowest Price:"] [:dd (get-price book :lowestPrice)]
-                 [:dt "Price Change:"] [:dd (get-price-change book)]
-                 [:dt "Total Available:"] [:dd (get-attribute book :totalAvailable)]
-                 [:dt "Price's Updated:"] [:dd (format-timestamp (get-attribute book :lastPriceUpdateTimestamp))]
-                 [:dt] [:dd
-                        [:a {:href (get book :amazonPageUrl) :target "_blank"}
-                         [:img {:src "/img/buy-from-amazon-button.gif" :caption "Buy from Amazon" :alt "Buy from Amazon"}]]]]]
-               ]]]))
-        )
-      )))
+         (if (empty? (:display app))
+           [:div {:class "book-div"}]
+           [:div {:class "book-div"}
+            [:legend (get-attribute (:display app) :title)]
+            [:table {:class "table"}
+             [:tr {:class "book-row"}
+              [:td {:class (str "large-book-img-td " (if (has-increased-in-value book) "increased-value" "decreased-value")) :align "right" :on-click #(display-index)}
+               [:img {:class "large-book-img" :src (get-image book :largeImage)}]]
+              [:td {:class "book-details-td" :align: "left"}
+               [:dl {:class "dl-horizontal details"}
+                [:dt "Author(s):"] [:dd (get-attribute book :authors)]
+                [:dt "ASIN:"] [:dd (get-attribute book :asin)]
+                [:dt "ISBN:"] [:dd (get-attribute book :isbn)]
+                [:dt "EAN:"] [:dd (get-attribute book :ean)]
+                [:dt "Publisher:"] [:dd (get-attribute book :publisher)]
+                [:dt "Publication Date:"] [:dd (get-attribute book :publicationDate)]
+                [:dt "Binding:"] [:dd (get-attribute book :binding)]
+                [:dt "Edition:"] [:dd (get-attribute book :edition)]
+                [:dt "Format:"] [:dd (get-attribute book :format)]
+                [:dt "No. of Pages:"] [:dd (get-attribute book :numberOfPages)]
+                [:dt "List price:"] [:dd (get-price book :listPrice)]
+                [:dt "Lowest Price:"] [:dd (get-price book :lowestPrice)]
+                [:dt "Price Change:"] [:dd (get-price-change book)]
+                [:dt "Total Available:"] [:dd (get-attribute book :totalAvailable)]
+                [:dt "Price's Updated:"] [:dd (format-timestamp (get-attribute book :lastPriceUpdateTimestamp))]
+                [:dt] [:dd
+                       [:a {:href (get book :amazonPageUrl) :target "_blank"}
+                        [:img {:src "/img/buy-from-amazon-button.gif" :caption "Buy from Amazon" :alt "Buy from Amazon"}]]]]]]]]))))))
 
 (defn index-view [app owner]
   (reify
@@ -162,16 +142,14 @@
       ;; return to our saved scroll position for when we
       ;; come back to the index from viewing a book's full details
       (let [saved-scroll (:scroll-pos @app-state)]
-        (.scrollTop ($ js/document) saved-scroll)
-        )
-      )
+        (.scrollTop ($ js/document) saved-scroll)))
     om/IRenderState
     (render-state [this state]
       (html/html
-        (if (empty? (:display app))
-          [:div {:class "content"}
-            (om/build-all light-book-view (:sorted-books app))]
-          [:div {:class "content"}])))))
+       (if (empty? (:display app))
+         [:div {:class "content"}
+          (om/build-all light-book-view (:sorted-books app))]
+         [:div {:class "content"}])))))
 
 (om/root index-view app-state
          {:target (. js/document (getElementById "book-list"))})

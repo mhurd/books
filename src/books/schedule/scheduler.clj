@@ -11,30 +11,28 @@
             [clojure.tools.logging :as log]))
 
 (defjob UpdateBookDetailsJob [ctx]
-        (let [context (qc/from-job-data ctx)
-              access-key (get context "access-key")
-              associate-tag (get context "associate-tag")
-              secret (get context "secret")
-              books (get-books)
-              asins (map #(:asin %) books)
-              offer-summaries (map #(do
-                                     (Thread/sleep 1000)    ;; Amazon complains if you fire API calls too fast
-                                     (offer-summary-to-map (find-offer-summary-by-isbn access-key associate-tag secret %))) asins)]
-          (update-offers offer-summaries)
-          )
-        )
+  (let [context (qc/from-job-data ctx)
+        access-key (get context "access-key")
+        associate-tag (get context "associate-tag")
+        secret (get context "secret")
+        books (get-books)
+        asins (map #(:asin %) books)
+        offer-summaries (map #(do
+                                (Thread/sleep 1000)    ;; Amazon complains if you fire API calls too fast
+                                (offer-summary-to-map (find-offer-summary-by-isbn access-key associate-tag secret %))) asins)]
+    (update-offers offer-summaries)))
 
 (defn init-jobs [scheduler access-key associate-tag secret]
   (let [job (j/build
-              (j/of-type UpdateBookDetailsJob)
-              (j/using-job-data {"access-key" access-key,
-                                 "associate-tag" associate-tag,
-                                 "secret" secret})
-              (j/with-identity (j/key "jobs.update-books")))
+             (j/of-type UpdateBookDetailsJob)
+             (j/using-job-data {"access-key" access-key,
+                                "associate-tag" associate-tag,
+                                "secret" secret})
+             (j/with-identity (j/key "jobs.update-books")))
         trigger (t/build
-                  (t/with-identity (t/key "triggers.12-hours"))
-                  (t/start-now)
-                  (t/with-schedule (schedule
-                                     (with-interval-in-hours 12))))]
+                 (t/with-identity (t/key "triggers.12-hours"))
+                 (t/start-now)
+                 (t/with-schedule (schedule
+                                   (with-interval-in-hours 12))))]
     (log/info "Initialising scheduled jobs...")
     (qs/schedule scheduler job trigger)))

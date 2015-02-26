@@ -10,25 +10,23 @@
 
 (def expected-basic-args
   (sorted-map
-    "Service" service-name,
-    "Version" api-version,
-    "AWSAccessKeyId" "one",
-    "AssociateTag" "two",
-    "SearchIndex" "Books",
-    "Condition" "All",
-    "Offer" "All",
-    "ResponseGroup" "ItemAttributes,OfferSummary,Images"))
+   "Service" service-name,
+   "Version" api-version,
+   "AWSAccessKeyId" "one",
+   "AssociateTag" "two",
+   "SearchIndex" "Books",
+   "Condition" "All",
+   "Offer" "All",
+   "ResponseGroup" "ItemAttributes,OfferSummary,Images"))
 
 (deftest test-basic-args
   (testing "basic-args memoization"
     (is (identical? (basic-args "foo" "bar") (basic-args "foo" "bar")))
-    (is (= (basic-args "one" "two") expected-basic-args))
-    ))
+    (is (= (basic-args "one" "two") expected-basic-args))))
 
 (deftest test-percent-encode-rfc-3986
   (testing "percent-encode-rfc-3986"
-    (is (= (percent-encode-rfc-3986 "one two three four") "one%20two%20three%20four"))
-    ))
+    (is (= (percent-encode-rfc-3986 "one two three four") "one%20two%20three%20four"))))
 
 (deftest test-hmac
   (testing "hmac"
@@ -36,6 +34,6 @@
 
 (deftest test-merge-and-encode-args
   (testing "merge-and-encode-args"
-      (is (=
-          (merge-and-encode-args "foo" "bar" (sorted-map "Key1" "value1", "Key2" "value2"))
-          "AWSAccessKeyId=foo&AssociateTag=bar&Condition=All&Key1=value1&Key2=value2&Offer=All&ResponseGroup=ItemAttributes%2COfferSummary%2CImages&SearchIndex=Books&Service=AWSECommerceService&Version=2011-08-01"))))
+    (is (=
+         (merge-and-encode-args "foo" "bar" (sorted-map "Key1" "value1", "Key2" "value2"))
+         "AWSAccessKeyId=foo&AssociateTag=bar&Condition=All&Key1=value1&Key2=value2&Offer=All&ResponseGroup=ItemAttributes%2COfferSummary%2CImages&SearchIndex=Books&Service=AWSECommerceService&Version=2011-08-01"))))

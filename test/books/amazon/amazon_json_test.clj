@@ -447,10 +447,9 @@
 </ItemLookupResponse>")
 
 (deftest test-safe-min
-   (testing "safe min function that handles nil values"
-      (is (= (safe-min 1 3) 1))
-      (is (= (safe-min nil 3) 3))
-      (is (= (safe-min 4 nil) 4))
-      (is (= (safe-min nil nil) nil))
-      (is (= (safe-min 4 1) 1))
-      ))
+  (testing "safe min function that handles nil values"
+    (is (= (safe-min 1 3) 1))
+    (is (= (safe-min nil 3) 3))
+    (is (= (safe-min 4 nil) 4))
+    (is (= (safe-min nil nil) nil))
+    (is (= (safe-min 4 1) 1))))

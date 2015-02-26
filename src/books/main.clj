@@ -1,18 +1,18 @@
  (ns books.main
-  (:require
-   [org.httpkit.server :refer [run-server]]
-   [books.schedule.scheduler :as scheduler]
-   [books.handler :as handler]
-   [clojure.tools.logging :as log]
-   [clojurewerkz.quartzite.scheduler :as qs])
-  (:gen-class))
+   (:require
+    [org.httpkit.server :refer [run-server]]
+    [books.schedule.scheduler :as scheduler]
+    [books.handler :as handler]
+    [clojure.tools.logging :as log]
+    [clojurewerkz.quartzite.scheduler :as qs])
+   (:gen-class))
 
- (defn -main [& args]
+(defn -main [& args]
   (let [access-key (first args)
         associate-tag (second args)
         secret (second (rest args))
         handler (handler/get-handler access-key associate-tag secret)
         scheduler (-> (qs/initialize) qs/start)]
-   (log/info "Starting main...")
-   (scheduler/init-jobs scheduler access-key associate-tag secret)
-   (run-server handler {:port 3000})))
+    (log/info "Starting main...")
+    (scheduler/init-jobs scheduler access-key associate-tag secret)
+    (run-server handler {:port 3000})))

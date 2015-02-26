@@ -1,10 +1,10 @@
 (ns books.amazon.amazon-json
   (:require [clojure.zip :refer (xml-zip)]
-        [clojure.data.json :refer (write-str)]
-        [clojure.data.xml :refer (parse-str)]
-        [clojure.data.zip.xml :refer (text xml1->)]
-        [cemerick.url :refer [url-decode]]
-        [cognitect.transit :refer [writer write]])
+            [clojure.data.json :refer (write-str)]
+            [clojure.data.xml :refer (parse-str)]
+            [clojure.data.zip.xml :refer (text xml1->)]
+            [cemerick.url :refer [url-decode]]
+            [cognitect.transit :refer [writer write]])
   (import [java.io ByteArrayInputStream ByteArrayOutputStream]))
 
 (defn String->Number [str]
@@ -17,97 +17,74 @@
   (xml1-> root :Items :Item))
 
 (defn get-error [root]
-  (or (xml1-> root :Error :Message text) (xml1-> root :Items :Request :Errors :Error :Message text))
-  )
+  (or (xml1-> root :Error :Message text) (xml1-> root :Items :Request :Errors :Error :Message text)))
 
 (defn get-asin [item-element]
-  (xml1-> item-element :ASIN text)
-  )
+  (xml1-> item-element :ASIN text))
 
 (defn get-detail-page-url [item-element]
-  (url-decode (xml1-> item-element :DetailPageURL text))
-  )
+  (url-decode (xml1-> item-element :DetailPageURL text)))
 
 (defn get-author [item-element]
-  (xml1-> item-element :ItemAttributes :Author text)
-  )
+  (xml1-> item-element :ItemAttributes :Author text))
 
 (defn get-binding [item-element]
-  (xml1-> item-element :ItemAttributes :Binding text)
-  )
+  (xml1-> item-element :ItemAttributes :Binding text))
 
 (defn get-ean [item-element]
-  (xml1-> item-element :ItemAttributes :EAN text)
-  )
+  (xml1-> item-element :ItemAttributes :EAN text))
 
 (defn get-format [item-element]
-  (xml1-> item-element :ItemAttributes :Format text)
-  )
+  (xml1-> item-element :ItemAttributes :Format text))
 
 (defn get-edition [item-element]
-  (xml1-> item-element :ItemAttributes :Edition text)
-  )
+  (xml1-> item-element :ItemAttributes :Edition text))
 
 (defn get-isbn [item-element]
-  (xml1-> item-element :ItemAttributes :ISBN text)
-  )
+  (xml1-> item-element :ItemAttributes :ISBN text))
 
 (defn get-list-price [item-element]
-  (String->Number (xml1-> item-element :ItemAttributes :ListPrice :Amount text))
-  )
+  (String->Number (xml1-> item-element :ItemAttributes :ListPrice :Amount text)))
 
 (defn get-number-of-pages [item-element]
-  (String->Number (xml1-> item-element :ItemAttributes :NumberOfPages text))
-  )
+  (String->Number (xml1-> item-element :ItemAttributes :NumberOfPages text)))
 
 (defn get-title [item-element]
-  (xml1-> item-element :ItemAttributes :Title text)
-  )
+  (xml1-> item-element :ItemAttributes :Title text))
 
 (defn get-lowest-new-price [item-element]
-  (String->Number (xml1-> item-element :OfferSummary :LowestNewPrice :Amount text))
-  )
+  (String->Number (xml1-> item-element :OfferSummary :LowestNewPrice :Amount text)))
 
 (defn get-lowest-used-price [item-element]
-  (String->Number (xml1-> item-element :OfferSummary :LowestUsedPrice :Amount text))
-  )
+  (String->Number (xml1-> item-element :OfferSummary :LowestUsedPrice :Amount text)))
 
 (defn get-total-new [item-element]
-  (String->Number (xml1-> item-element :OfferSummary :TotalNew text))
-  )
+  (String->Number (xml1-> item-element :OfferSummary :TotalNew text)))
 
 (defn get-total-used [item-element]
-  (String->Number (xml1-> item-element :OfferSummary :TotalUsed text))
-  )
+  (String->Number (xml1-> item-element :OfferSummary :TotalUsed text)))
 
 (defn get-small-image [item-element]
-  (url-decode (xml1-> item-element :SmallImage :URL text))
-  )
+  (url-decode (xml1-> item-element :SmallImage :URL text)))
 
 (defn get-medium-image [item-element]
-  (url-decode (xml1-> item-element :MediumImage :URL text))
-  )
+  (url-decode (xml1-> item-element :MediumImage :URL text)))
 
 (defn get-large-image [item-element]
-  (url-decode (xml1-> item-element :LargeImage :URL text))
-  )
+  (url-decode (xml1-> item-element :LargeImage :URL text)))
 
 (defn get-publisher [item-element]
-  (xml1-> item-element :ItemAttributes :Publisher text)
-  )
+  (xml1-> item-element :ItemAttributes :Publisher text))
 
 (defn get-publication-date [item-element]
-  (xml1-> item-element :ItemAttributes :PublicationDate text)
-  )
+  (xml1-> item-element :ItemAttributes :PublicationDate text))
 
 (defn safe-min [x y]
   (if-not (or x y) ;; both nil
     nil
     (let [sx (or x Integer/MAX_VALUE)
           sy (or y Integer/MAX_VALUE)]
-      (min sx sy))
-    )
-  )
+      (min sx sy))))
 
 (defn to-map [amazon-xml]
   (let [doc (parse-str amazon-xml)
@@ -141,8 +118,7 @@
          :largeBookCover (get-large-image item),
          :lastPriceUpdateTimestamp (System/currentTimeMillis),
          :publisher (get-publisher item),
-         :publicationDate (get-publication-date item)))))
-  )
+         :publicationDate (get-publication-date item))))))
 
 (defn offer-summary-to-map [amazon-xml]
   (let [doc (parse-str amazon-xml)
@@ -152,15 +128,14 @@
       (if error
         {:error error}                                      ;; return the error
         (sorted-map
-          :asin (get-asin item),
-          :lowestPrice (safe-min (get-lowest-new-price item) (get-lowest-used-price item)), ;; compatibility
-          :lowestNewPrice (get-lowest-new-price item),
-          :lowestUsedPrice (get-lowest-used-price item),
-          :totalAvailable (+ (get-total-new item) (get-total-used item))
-          :totalNew (get-total-new item),
-          :totalUsed (get-total-used item),
-          :lastPriceUpdateTimestamp (System/currentTimeMillis)))))
-  )
+         :asin (get-asin item),
+         :lowestPrice (safe-min (get-lowest-new-price item) (get-lowest-used-price item)), ;; compatibility
+         :lowestNewPrice (get-lowest-new-price item),
+         :lowestUsedPrice (get-lowest-used-price item),
+         :totalAvailable (+ (get-total-new item) (get-total-used item))
+         :totalNew (get-total-new item),
+         :totalUsed (get-total-used item),
+         :lastPriceUpdateTimestamp (System/currentTimeMillis))))))
 
 (defn map-to-json [json]
   (let [out (ByteArrayOutputStream. 4096)
@@ -168,9 +143,7 @@
     (try
       (write w json)
       (.toString out "UTF-8")
-      (finally (.close out)))
-    )
-  )
+      (finally (.close out)))))
 
 (defn xml-to-json [xml]
   (if (coll? xml)

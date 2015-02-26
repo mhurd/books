@@ -31,23 +31,21 @@
              "Creates a message authentication code initialised with the supplied SecretKeySpec"
              (let [mac-instance (. Mac getInstance sha-256)]
                (. mac-instance init secret-key-spec)
-               mac-instance
-               ))))
+               mac-instance))))
 
 (def get-basic-args
   (memoize (fn [accessKey associateTag]
              (sorted-map
-               "Service" service-name,
-               "Version" api-version,
-               "AWSAccessKeyId" accessKey,
-               "AssociateTag" associateTag,
-               "Condition" "All",
-               "Offer" "All",
-               "ResponseGroup" "ItemAttributes,OfferSummary,Images"))))
+              "Service" service-name,
+              "Version" api-version,
+              "AWSAccessKeyId" accessKey,
+              "AssociateTag" associateTag,
+              "Condition" "All",
+              "Offer" "All",
+              "ResponseGroup" "ItemAttributes,OfferSummary,Images"))))
 
 (defn format-iso-8601-timestamp [date]
-  (. iso-8601-timestamp-formatter format date)
-  )
+  (. iso-8601-timestamp-formatter format date))
 
 (defn current-iso-8601-timestamp []
   (format-iso-8601-timestamp (Date.)))
@@ -56,8 +54,7 @@
   "Encodes the URL additionally encoding '+' to spaces,
   See http://stackoverflow.com/questions/2678551/when-to-encode-space-to-plus-or-20"
   (if-let [to-encode s]
-    (clojure.string/replace (. URLEncoder encode to-encode utf8-charset) "+" "%20"))
-  )
+    (clojure.string/replace (. URLEncoder encode to-encode utf8-charset) "+" "%20")))
 
 (defn hmac [secret-key-spec to-encode]
   "Creates a hashed message authentication code from the supplied
@@ -70,9 +67,7 @@
   (let [bytes (. to-encode getBytes utf8-charset)
         rawHmac (. (get-mac secret-key-spec) doFinal bytes)
         encoded (. base-64-encoder encode rawHmac)]
-    (String. encoded)
-    )
-  )
+    (String. encoded)))
 
 (defn merge-and-encode-args
   "Take the access key and associate tag and the map of sorted args and merge them
@@ -80,8 +75,7 @@
   [access-key associate-tag args]
   (let [merged (merge (get-basic-args access-key associate-tag) args)
         encoded-args (map (fn [[k, v]] (str (percent-encode-rfc-3986 k) "=" (percent-encode-rfc-3986 v))) merged)]
-    (apply str (interpose "&" encoded-args)))
-  )
+    (apply str (interpose "&" encoded-args))))
 
 (defn merge-and-encode-args-with-timestamp [access-key associate-tag args]
   "Take the access key and associate tag and the map of sorted args and merge them
@@ -93,26 +87,20 @@
         to-sign (str "GET\n" api-host "\n" api-url "\n" merged)
         hmac-result (hmac (get-secret-key-spec secret) to-sign)
         sig (percent-encode-rfc-3986 hmac-result)]
-    (str api-url "?" merged "&Signature=" sig)
-    )
-  )
+    (str api-url "?" merged "&Signature=" sig)))
 
 (defn find-on-amazon [access-key associate-tag secret args]
   (let [response (http-kit/get (str "https://" api-host (create-signed-url access-key associate-tag secret args)))]
-    (:body @response)
-    ))
+    (:body @response)))
 
 (defn find-by-isbn [access-key associate-tag secret isbn]
   ;; ASIN is the same as the ISBN-10
-  (find-on-amazon access-key associate-tag secret (sorted-map "Operation" "ItemLookup" "ItemId" isbn "IdType" "ASIN"))
-  )
+  (find-on-amazon access-key associate-tag secret (sorted-map "Operation" "ItemLookup" "ItemId" isbn "IdType" "ASIN")))
 
 (defn find-offer-summary-by-isbn [access-key associate-tag secret isbn]
   ;; ASIN is the same as the ISBN-10
-  (find-on-amazon access-key associate-tag secret (sorted-map "ResponseGroup" "OfferSummary" "Operation" "ItemLookup" "ItemId" isbn "IdType" "ASIN"))
-  )
+  (find-on-amazon access-key associate-tag secret (sorted-map "ResponseGroup" "OfferSummary" "Operation" "ItemLookup" "ItemId" isbn "IdType" "ASIN")))
 
 (defn get-finders [access-key associate-tag secret]
   {:details (partial find-by-isbn access-key associate-tag secret)
-   :offer-summary (partial find-offer-summary-by-isbn associate-tag secret)}
-  )
+   :offer-summary (partial find-offer-summary-by-isbn associate-tag secret)})

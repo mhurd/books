@@ -20,13 +20,11 @@
                                                   :lowestUsedPrice (:lowestUsedPrice offer)
                                                   :totalAvailable (:totalAvailable offer)
                                                   :totalNew (:totalNew offer)
-                                                  :totalUsed (:totalUsed offer)}})
-  )
+                                                  :totalUsed (:totalUsed offer)}}))
 
 (defn update-offers [offer-summaries]
   (let [conn (m/connect)
         db (m/get-db conn "library")
         coll "books"]
     (log/info "Updating offers...")
-    (doseq [summary offer-summaries] (update-offer db coll summary))
-  ))
+    (doseq [summary offer-summaries] (update-offer db coll summary))))
