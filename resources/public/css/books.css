@@ -2,6 +2,27 @@ legend {
     margin-bottom: 4px !important;
 }
 
+.header a {
+    color: #000000;
+    font-size: 2em;
+    font-family: 'Palatino Linotype', 'Book Antiqua', Palatino, FreeSerif, serif;
+    text-decoration: none;
+}
+
+.header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 999;
+    width: 100%;
+    height: 4.5em;
+    padding-top: 1em;
+    padding-left: 2em;
+    background-color: #a1a1a1;
+    text-align: left;
+    vertical-align: middle;
+}
+
 .book-div {
     margin-bottom: 1.5em;
 }
@@ -21,7 +42,6 @@ legend {
 .large-book-img-td {
     width: 160px;
     text-align: center;
-    cursor: pointer;
 }
 
 .large-book-img {
@@ -30,8 +50,14 @@ legend {
     height: auto;
 }
 
-.content {
-    padding-top: 2em;
+.list-content {
+    padding-top: 6em;
+    padding-left: 2em;
+    padding-right: 2em;
+}
+
+.single-book-content {
+    padding-top: 0em;
     padding-left: 2em;
     padding-right: 2em;
 }

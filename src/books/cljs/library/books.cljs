@@ -4,7 +4,9 @@
             [sablono.core :as html :refer-macros [html]]
             [ajax.core :refer [GET POST]]
             [cemerick.url :refer [url-encode]]
-            [jayq.core :refer [$]]))
+            [jayq.core :refer [$]]
+            [goog.events :as events])
+  (:import goog.History))
 
 (enable-console-print!)
 
@@ -16,6 +18,12 @@
                       :indexed-books {},
                       :display {},
                       :scroll-pos 0}))
+
+(defn get-attribute [book key]
+  (let [val (get book key)]
+    (if (nil? val)
+      "no-data"
+      val)))
 
 (defn display-book [book]
   (let [current-scroll (.scrollTop ($ js/document))]
@@ -30,7 +38,13 @@
   (let [sorted (sort-by :title books)
         indexed (zipmap (map #(:asin %) sorted) sorted)]
     (swap! app-state assoc :sorted-books sorted)
-    (swap! app-state assoc :indexed-books indexed)))
+    (swap! app-state assoc :indexed-books indexed)
+    ;; now we've loaded the books completely honour the location hash if present.
+    (let [location (.-hash js/window.location)]
+      (if (not (or (nil? location) (empty? location)))
+        ;; for some reason this location hasj includes the '#', remove it.
+        (let [trimmed (.substring location 1)]
+          (display-book (get indexed trimmed)))))))
 
 (defn handle-error [error]
   (println (str error)))
@@ -46,12 +60,6 @@
     (if (nil? price)
       "no-data"
       (str "£" (.toFixed (/ (js/parseFloat price) 100) 2)))))
-
-(defn get-attribute [book key]
-  (let [val (get book key)]
-    (if (nil? val)
-      "no-data"
-      val)))
 
 (defn has-increased-in-value [book]
   (let [listPrice (get book :listPrice)
@@ -86,8 +94,9 @@
         [:legend (str (get-attribute book :title))]
         [:table {:class "table"}
          [:tr {:class "book-row"}
-          [:td {:class (str "book-img-td " (if (has-increased-in-value book) "increased-value" "decreased-value")) :align "right" :on-click #(display-book book)}
-           [:img {:class "book-img" :src (get-image book :smallImage)}]]
+          [:td {:class (str "book-img-td " (if (has-increased-in-value book) "increased-value" "decreased-value")) :align "right"}
+           [:a {:href (str "#" (get-attribute book :asin))}
+            [:img {:class "book-img" :src (get-image book :smallImage)}]]]
           [:td {:class "book-details-td" :align: "left"}
            [:dl {:class "dl-horizontal details"}
             [:dt "Author(s):"] [:dd (get-attribute book :authors)]
@@ -108,7 +117,7 @@
             [:legend (get-attribute (:display app) :title)]
             [:table {:class "table"}
              [:tr {:class "book-row"}
-              [:td {:class (str "large-book-img-td " (if (has-increased-in-value book) "increased-value" "decreased-value")) :align "right" :on-click #(display-index)}
+              [:td {:class (str "large-book-img-td " (if (has-increased-in-value book) "increased-value" "decreased-value")) :align "right"}
                [:img {:class "large-book-img" :src (get-image book :largeImage)}]]
               [:td {:class "book-details-td" :align: "left"}
                [:dl {:class "dl-horizontal details"}
@@ -135,7 +144,6 @@
   (reify
     om/IInitState
     (init-state [_]
-      (get-books)
       {})
     om/IDidUpdate
     (did-update [this prev-props prev-state]
@@ -143,16 +151,27 @@
       ;; come back to the index from viewing a book's full details
       (let [saved-scroll (:scroll-pos @app-state)]
         (.scrollTop ($ js/document) saved-scroll)))
-    om/IRenderState
-    (render-state [this state]
+    om/IRender
+    (render [_]
       (html/html
        (if (empty? (:display app))
-         [:div {:class "content"}
-          (om/build-all light-book-view (:sorted-books app))]
-         [:div {:class "content"}])))))
+         [:div (om/build-all light-book-view (:sorted-books app))]
+         [:div ])))))
 
 (om/root index-view app-state
          {:target (. js/document (getElementById "book-list"))})
 
 (om/root full-book-view app-state
          {:target (. js/document (getElementById "book"))})
+
+(get-books)
+
+;; Attach event listener to history instance.
+(let [history (History.)]
+  (events/listen history "navigate"
+                 (fn [event]
+                   (let [location (.-token event)]
+                     (if (or (nil? location) (empty? location))
+                       (display-index)
+                       (display-book (get (:indexed-books @app-state) location))))))
+  (.setEnabled history true))

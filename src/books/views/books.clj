@@ -23,6 +23,9 @@
     (with-css)
     (include-js "/lib/google-analytics.js")]
    [:body
-    [:div {:id "book-list"}]
-    [:div {:id "book" :class "content"}]
+    [:div {:class "header"}
+     [:a {:href "/" }
+      "Photobook Library"]]
+    [:div {:id "book-list" :class "list-content"}]
+    [:div {:id "book" :class "single-book-content"}]
     (with-js)]))
