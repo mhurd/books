@@ -12,7 +12,7 @@
                  [org.clojure/clojure "1.6.0"]
                  [org.clojure/core.async "0.1.346.0-17112a-alpha"]
                  [om "0.8.0-beta5"]
-                 [http-kit "2.1.18"]
+                 [http-kit "2.3.0"]
                  [cljs-ajax "0.3.3"]
                  [com.cemerick/url "0.1.1"]
                  [org.clojure/tools.logging "0.3.1"]
