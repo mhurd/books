@@ -1,3 +1,4 @@
+;; required to enable http access to local repo
 (require 'cemerick.pomegranate.aether)
 (cemerick.pomegranate.aether/register-wagon-factory!
  "http" #(org.apache.maven.wagon.providers.http.HttpWagon.))
@@ -80,9 +81,10 @@
  
   :warnings false
   
-  :mirrors {"central" {:name "central"
-                       :url "http://nexus.home:8082/repository/maven-group/"}
-            #"clojars" {:name "Internal nexus"
+  :mirrors {"central" {:name "nexus-home-central"
+                       :url "http://nexus.home:8082/repository/maven-group/"
+                       :repo-manager true}
+            #"clojars" {:name "nexus-home-clojars"
                         :url "http://nexus.home:8082/repository/maven-group/"
                         :repo-manager true}}
 
