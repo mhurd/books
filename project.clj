@@ -81,12 +81,10 @@
  
   :warnings false
   
-  :mirrors {"central" {:name "nexus-home-central"
-                       :url "http://nexus.home:8082/repository/maven-group/"
-                       :repo-manager true}
-            #"clojars" {:name "nexus-home-clojars"
-                        :url "http://nexus.home:8082/repository/maven-group/"
-                        :repo-manager true}}
+  :deploy-repositories [["releases" {:url ""http://nexus.home:8082/repository/maven-releases/"
+                                     :username "jenkins-build" :password "jenkins-build" }]
+                        ["snapshots" {:url "http://nexus.home:8082/repository/maven-snapshots/"
+                                      :username "jenkins-build" :password "jenkins-build"}]])
 
   :profiles
     {:dev {:dependencies [[ring-mock "0.1.5"]
