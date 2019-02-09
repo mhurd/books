@@ -34,10 +34,6 @@
                  [com.cognitect/transit-cljs "0.8.194"]
                  [com.novemberain/monger "2.0.0"]           ;; see http://clojuremongodb.info/articles/getting_started.html
                  [clojurewerkz/quartzite "2.0.0"]           ;; see http://clojurequartz.info/articles/getting_started.html
-                 [javax.xml.bind/jaxb-api "2.2.11"]         ;; these have been moved from the JDK
-                 [javax.xml.bind/jaxb-core "2.2.11"]
-                 [javax.xml.bind/jaxb-impl "2.2.11"]
-                 [javax.activation/activation "1.1.1"]
                  ]
 
   :plugins [[lein-ring "0.8.13"]
