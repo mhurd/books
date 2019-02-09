@@ -78,13 +78,9 @@
                          }}]}
 
   :main books.main
+  :aot [books.main]
  
   :warnings false
-  
-  :deploy-repositories [["releases" {:url "http://nexus.home:8082/repository/maven-releases/"
-                                     :username "jenkins-build" :password "jenkins-build" }]
-                        ["snapshots" {:url "http://nexus.home:8082/repository/maven-snapshots/"
-                                      :username "jenkins-build" :password "jenkins-build"}]]
 
   :profiles
     {:dev {:dependencies [[ring-mock "0.1.5"]
