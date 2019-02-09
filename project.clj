@@ -1,3 +1,7 @@
+(require 'cemerick.pomegranate.aether)
+(cemerick.pomegranate.aether/register-wagon-factory!
+ "http" #(org.apache.maven.wagon.providers.http.HttpWagon.))
+
 (defproject books "0.1.0-SNAPSHOT"
   :description "FIXME: write this!"
   :url "http://example.com/FIXME"
@@ -73,6 +77,14 @@
                          }}]}
 
   :main books.main
+ 
+  :warnings false
+  
+  :mirrors {"central" {:name "central"
+                       :url "http://nexus.home:8082/repository/maven-group/"}
+            #"clojars" {:name "Internal nexus"
+                        :url "http://nexus.home:8082/repository/maven-group/"
+                        :repo-manager true}}
 
   :profiles
     {:dev {:dependencies [[ring-mock "0.1.5"]
