@@ -75,9 +75,9 @@
   :main books.main
   
   :mirrors {"central" {:name "central"
-                       :url "http://nexus.home:8082/repository/maven-group/"}
+                       :url "https://nexus.home:8082/repository/maven-group/"}
             #"clojars" {:name "Internal nexus"
-                        :url "http://nexus.home:8082/repository/maven-group/"
+                        :url "https://nexus.home:8082/repository/maven-group/"
                         :repo-manager true}}
 
   :profiles
