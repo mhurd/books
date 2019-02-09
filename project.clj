@@ -77,6 +77,8 @@
                          }}]}
 
   :main books.main
+ 
+  :warnings false
   
   :mirrors {"central" {:name "central"
                        :url "http://nexus.home:8082/repository/maven-group/"}
