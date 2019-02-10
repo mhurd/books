@@ -80,11 +80,11 @@
   :main books.main
   :aot [books.main]
   
-  :mirrors {#".+" {:url "https://nexus.home:8082/repository/maven-group/"}}
+  :mirrors {#".+" {:url "https://nexus.home:443/repository/maven-group/"}}
   :repositories [["snapshots" {:id "neux-home-snapshots" 
-                               :url "https://nexus.home:8082/repository/maven-snapshots"}]
+                               :url "https://nexus.home:443/repository/maven-snapshots"}]
                  ["releases" {:id "nexus-home-releases"
-                              :url "https://nexus.example.com:8081/nexus/content/repositories/releases" 
+                              :url "https://nexus.example.com:443/nexus/content/repositories/releases" 
                               :sign-releases false}]]
   :auth {:repository-auth {#"nexus.home" {:username "jenkins-build" :password "jenkins-build"}}}
  
