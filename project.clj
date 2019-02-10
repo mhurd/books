@@ -45,6 +45,9 @@
             [lein-cljfmt "0.1.10"]
             [camechis/deploy-uberjar "0.3.0"]]
   
+  :aliases {"jar"    "uberjar"
+            "deploy" "uberjar-deploy"}
+  
   :mirrors {#".+" {:url "https://nexus.home:443/repository/maven-group/"}}
   :repositories [["snapshots" {:id "neux-home-snapshots" 
                                :url "https://nexus.home:443/repository/maven-snapshots"
