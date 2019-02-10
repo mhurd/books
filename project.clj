@@ -43,7 +43,7 @@
             ;; https://github.com/weavejester/cljfmt/
             ;; lein cljfmt check, lein cljfmt fix
             [lein-cljfmt "0.1.10"]
-            [uberjar-deploy "1.1.0"]]
+            [lein-deploy-uberjar "2.0.0"]]
   
   :aliases {"jar"    "uberjar"
             "deploy" "uberjar-deploy"}
