@@ -46,11 +46,14 @@
   
   :mirrors {#".+" {:url "https://nexus.home:443/repository/maven-group/"}}
   :repositories [["snapshots" {:id "neux-home-snapshots" 
-                               :url "https://nexus.home:443/repository/maven-snapshots"}]
+                               :url "https://nexus.home:443/repository/maven-snapshots"
+                               :username :env/nexus_username
+                               :password :env/nexus_password}]
                  ["releases" {:id "nexus-home-releases"
                               :url "https://nexus.example.com:443/nexus/content/repositories/releases" 
+                              :username :env/nexus_username
+                              :password :env/nexus_password
                               :sign-releases false}]]
-  :auth {:repository-auth {#"nexus.home" {:username "jenkins-build" :password "jenkins-build"}}}
 
   :hooks [leiningen.cljsbuild]
 
