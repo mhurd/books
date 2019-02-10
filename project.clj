@@ -42,7 +42,7 @@
                  ]
 
   :plugins [[lein-ring "0.8.13"]
-            [lein-cljsbuild "1.0.3"]
+            [lein-cljsbuild "1.1.7"]
             ;; lein marg --dir resources/public/docs src/gridlife/gamemodel.cljs
             [lein-marginalia "0.8.0"]
             ;; https://github.com/weavejester/cljfmt/
