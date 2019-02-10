@@ -1,4 +1,4 @@
-(defproject books "1.0"
+(defproject books "1.0-SNAPSHOT"
   :description "FIXME: write this!"
   :url "http://example.com/FIXME"
 
