@@ -14,7 +14,7 @@
   dependencies [[compojure "1.6.1"]
                  [ring "1.7.1"]
                  [org.clojure/clojurescript "1.10.516"]
-                 [org.clojure/clojure "1.10.0"]
+                 [org.clojure/clojure "1.8.0"]
                  [org.clojure/core.async "0.4.490"]
                  [om "0.8.0-rc1"]
                  [http-kit "2.3.0"]
