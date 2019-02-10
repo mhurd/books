@@ -1,7 +1,7 @@
 ;; required to enable http access to local repo
-(require 'cemerick.pomegranate.aether)
-(cemerick.pomegranate.aether/register-wagon-factory!
- "http" #(org.apache.maven.wagon.providers.http.HttpWagon.))
+;;(require 'cemerick.pomegranate.aether)
+;;(cemerick.pomegranate.aether/register-wagon-factory!
+;; "http" #(org.apache.maven.wagon.providers.http.HttpWagon.))
 
 (defproject books "0.1.0-SNAPSHOT"
   :description "FIXME: write this!"
