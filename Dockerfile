@@ -1,5 +1,5 @@
 # First build does the actual compile
-FROM mhurd/build-jdk8:1.0
+FROM nexus.home:8083/build-jdk8:latest
 WORKDIR /root
 USER root
 RUN /bin/sh -c 'git clone https://github.com/mhurd/books.git'
