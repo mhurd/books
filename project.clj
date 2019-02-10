@@ -42,7 +42,8 @@
             [lein-marginalia "0.8.0"]
             ;; https://github.com/weavejester/cljfmt/
             ;; lein cljfmt check, lein cljfmt fix
-            [lein-cljfmt "0.1.10"]]
+            [lein-cljfmt "0.1.10"]
+            [camechis/deploy-uberjar "0.3.0"]]
   
   :mirrors {#".+" {:url "https://nexus.home:443/repository/maven-group/"}}
   :repositories [["snapshots" {:id "neux-home-snapshots" 
