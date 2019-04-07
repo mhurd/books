@@ -18,11 +18,11 @@
         api-sleep (get context "api-sleep")
         books (get-books)
         asins (map #(:asin %) books)
-        (log/info (str "Using AWS API call sleep time of: " api-sleep))
         offer-summaries (map #(do
                                 (Thread/sleep api-sleep)    ;; Amazon complains if you fire API calls too fast
                                 (offer-summary-to-map (find-offer-summary-by-isbn access-key associate-tag secret %))) asins)]
-    (update-offers offer-summaries)))
+    (log/info (str "Using AWS API call sleep time of: " api-sleep))
+    (update-offers offer-summaries api-sleep)))
 
 (defn init-jobs [scheduler access-key associate-tag secret api-sleep]
   (let [job (j/build
