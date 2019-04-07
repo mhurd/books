@@ -15,19 +15,22 @@
         access-key (get context "access-key")
         associate-tag (get context "associate-tag")
         secret (get context "secret")
+        api-sleep (get context "api-sleep")
         books (get-books)
         asins (map #(:asin %) books)
+        (log/info "Using AWS AI call sleep time of: " api-sleep)
         offer-summaries (map #(do
-                                (Thread/sleep 3000)    ;; Amazon complains if you fire API calls too fast
+                                (Thread/sleep api-sleep)    ;; Amazon complains if you fire API calls too fast
                                 (offer-summary-to-map (find-offer-summary-by-isbn access-key associate-tag secret %))) asins)]
     (update-offers offer-summaries)))
 
-(defn init-jobs [scheduler access-key associate-tag secret]
+(defn init-jobs [scheduler access-key associate-tag secret api-sleep]
   (let [job (j/build
              (j/of-type UpdateBookDetailsJob)
              (j/using-job-data {"access-key" access-key,
                                 "associate-tag" associate-tag,
-                                "secret" secret})
+                                "secret" secret,
+                                "api-sleep" api-sleep})
              (j/with-identity (j/key "jobs.update-books")))
         trigger (t/build
                  (t/with-identity (t/key "triggers.24-hours"))

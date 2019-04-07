@@ -11,8 +11,9 @@
   (let [access-key (first args)
         associate-tag (second args)
         secret (second (rest args))
-        handler (handler/get-handler access-key associate-tag secret)
+        api-sleep (second (rest args))
+        handler (handler/get-handler access-key associate-tag secret api-sleep)
         scheduler (-> (qs/initialize) qs/start)]
     (log/info "Starting main...")
-    (scheduler/init-jobs scheduler access-key associate-tag secret)
+    (scheduler/init-jobs scheduler access-key associate-tag secret, api-sleep)
     (run-server handler {:port 3000})))

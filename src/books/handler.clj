@@ -26,25 +26,25 @@
 
 (defn no-mongo? [] false) ;; change this to true to load examples direct from Amazon API
 
-(defn get-books [access-key associate-tag secret page-size page]
+(defn get-books [access-key associate-tag secret page-size page api-sleep]
   (log/info "Getting books...")
   (if (no-mongo?)
     ((memoize
       (fn [page-size page]
         (let [json (xml-to-json (map #(do
-                                        (Thread/sleep 1000)
+                                        (Thread/sleep api-sleep)
                                         (find-by-isbn access-key associate-tag secret %)) example-isbns))]
           json))) page-size page)
     (map-to-json (mongo/get-books))))
 
 ;; don't use the defroutes macro as there is no nice way to inject app-state into it without globals
-(defn main-routes [access-key associate-tag secret]
+(defn main-routes [access-key associate-tag secret api-sleep]
   (routes
    (GET "/" [] (index-page))
    (GET "/api/books/:id" [id] (xml-to-json (find-by-isbn access-key associate-tag secret id)))
-   (GET "/api/books" [page-size page] (get-books access-key associate-tag secret page-size page))
+   (GET "/api/books" [page-size page] (get-books access-key associate-tag secret page-size page api-sleep))
    (route/resources "/")
    (route/not-found "<p>Page not found.</p>")))
 
-(defn get-handler [access-key associate-tag secret]
-  (stacktrace/wrap-stacktrace (site (main-routes access-key associate-tag secret))))
+(defn get-handler [access-key associate-tag secret api-sleep]
+  (stacktrace/wrap-stacktrace (site (main-routes access-key associate-tag secret api-sleep))))
