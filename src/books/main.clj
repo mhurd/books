@@ -15,5 +15,5 @@
         handler (handler/get-handler access-key associate-tag secret api-sleep)
         scheduler (-> (qs/initialize) qs/start)]
     (log/info "Starting main...")
-    (scheduler/init-jobs scheduler access-key associate-tag secret, api-sleep)
+    (scheduler/init-jobs scheduler access-key associate-tag secret api-sleep)
     (run-server handler {:port 3000})))
