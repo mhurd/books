@@ -18,7 +18,7 @@
         books (get-books)
         asins (map #(:asin %) books)
         offer-summaries (map #(do
-                                (Thread/sleep 1000)    ;; Amazon complains if you fire API calls too fast
+                                (Thread/sleep 3000)    ;; Amazon complains if you fire API calls too fast
                                 (offer-summary-to-map (find-offer-summary-by-isbn access-key associate-tag secret %))) asins)]
     (update-offers offer-summaries)))
 
@@ -30,9 +30,9 @@
                                 "secret" secret})
              (j/with-identity (j/key "jobs.update-books")))
         trigger (t/build
-                 (t/with-identity (t/key "triggers.12-hours"))
+                 (t/with-identity (t/key "triggers.24-hours"))
                  (t/start-now)
                  (t/with-schedule (schedule
-                                   (with-interval-in-hours 12))))]
+                                   (with-interval-in-hours 24))))]
     (log/info "Initialising scheduled jobs...")
     (qs/schedule scheduler job trigger)))
