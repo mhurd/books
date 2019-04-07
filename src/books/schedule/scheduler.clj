@@ -22,7 +22,7 @@
                                 (Thread/sleep api-sleep)    ;; Amazon complains if you fire API calls too fast
                                 (offer-summary-to-map (find-offer-summary-by-isbn access-key associate-tag secret %))) asins)]
     (log/info (str "Using AWS API call sleep time of: " api-sleep))
-    (update-offers offer-summaries api-sleep)))
+    (update-offers offer-summaries)))
 
 (defn init-jobs [scheduler access-key associate-tag secret api-sleep]
   (let [job (j/build
